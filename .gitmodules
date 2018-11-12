@@ -1,0 +1,3 @@
+[submodule "Plugins/Bluelua"]
+	path = Plugins/Bluelua
+	url = https://github.com/jashking/Bluelua.git
