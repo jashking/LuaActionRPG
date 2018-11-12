@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.20",
+	"EngineAssociation": "{6908BE16-4D94-C938-4E39-D98AC80EDED9}",
 	"Category": "Samples",
 	"Description": "",
 	"Modules": [
@@ -144,6 +144,10 @@
 			"SupportedTargetPlatforms": [
 				"Lumin"
 			]
+		},
+		{
+			"Name": "Bluelua",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [

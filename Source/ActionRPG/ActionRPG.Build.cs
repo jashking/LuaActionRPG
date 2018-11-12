@@ -24,7 +24,9 @@ public class ActionRPG : ModuleRules
 				"MoviePlayer",
 				"GameplayAbilities",
 				"GameplayTags",
-				"GameplayTasks"
+				"GameplayTasks",
+				"Liblua",
+				"Bluelua"
 			}
 		);
 
