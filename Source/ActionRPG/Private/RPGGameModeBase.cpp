@@ -10,3 +10,25 @@ ARPGGameModeBase::ARPGGameModeBase()
 	GameStateClass = ARPGGameStateBase::StaticClass();
 	PlayerControllerClass = ARPGPlayerControllerBase::StaticClass();
 }
+
+void ARPGGameModeBase::BeginPlay()
+{
+	OnInit(LuaFilePath);
+
+	Super::BeginPlay();
+}
+
+void ARPGGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	OnRelease();
+}
+
+void ARPGGameModeBase::ProcessEvent(UFunction* Function, void* Parameters)
+{
+	if (!OnProcessEvent(Function, Parameters))
+	{
+		Super::ProcessEvent(Function, Parameters);
+	}
+}

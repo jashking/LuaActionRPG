@@ -148,6 +148,10 @@
 		{
 			"Name": "Bluelua",
 			"Enabled": true
+		},
+		{
+			"Name": "UdpMessaging",
+			"Enabled": false
 		}
 	],
 	"TargetPlatforms": [
