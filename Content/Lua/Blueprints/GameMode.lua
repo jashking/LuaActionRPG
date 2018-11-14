@@ -2,6 +2,7 @@ local m = {}
 
 local Super = Super
 local loadClass = loadClass
+local loadObject = loadObject
 local createDelegate = createDelegate
 local createLatentAction = createLatentAction
 
@@ -17,19 +18,12 @@ end
 
 function m:PlayDefaultIntroCutscene()
     OutActors = GameplayStatics:GetAllActorsOfClass(WorldContextObject, loadClass('LevelSequenceActor'), {})
-
-    ---[[
-    self:StartGame()
-    --]]
-
-    --[[
     if OutActors[1] then
         local PlayerController = GameplayStatics:GetPlayerController(WorldContextObject, 0)
-        PlayerController:PlaySkippableCutscene(OutActors[1].SequencePlayer)
+        PlayerController:ToLuaObject():PlaySkippableCutscene(OutActors[1].SequencePlayer)
     else
         self:StartGame()
     end
-    --]]
 end
 
 function m:StartGame()
@@ -56,6 +50,24 @@ function m:UpdatePlayTime()
         self:GameOver()
     end
 end
+
+--[[
+function m:StartEnemySpawn()
+    local LatentActionInfo = createLatentAction(createDelegate(Super, self, self.StartNewWave))
+
+    KismetSystemLibrary:Delay(WorldContextObject, 1, LatentActionInfo)
+end
+
+function m:StartNewWave()
+    local DataTableFunctionLibrary = loadClass('DataTableFunctionLibrary')
+
+    local WavesStruct = loadStruct('/Game/Blueprints/Progression/WavesStruct.WavesStruct')
+    local WavesProgression = loadObject(Super, '/Game/Blueprints/Progression/WavesProgression.WavesProgression')
+
+    local wave = WavesStruct()
+    result, row = BlueluaLibrary:GetDataTableRowFromName(WavesProgression, 'Wave_' .. Super.CurrentWave, wave)
+end
+--]]
 
 function m:GameOver()
     GameplayStatics:SetGlobalTimeDilation(WorldContextObject, 0.25)

@@ -371,12 +371,36 @@ void ARPGPlayerControllerBase::NotifyInventoryLoaded()
 	OnInventoryLoaded.Broadcast();
 }
 
+void ARPGPlayerControllerBase::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	PreRegisterLua(LuaFilePath);
+}
+
 void ARPGPlayerControllerBase::BeginPlay()
 {
+	OnInit(LuaFilePath);
+
 	// Load inventory off save game before starting play
 	LoadInventory();
 
 	Super::BeginPlay();
+}
+
+void ARPGPlayerControllerBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	OnRelease();
+}
+
+void ARPGPlayerControllerBase::ProcessEvent(UFunction* Function, void* Parameters)
+{
+	if (!OnProcessEvent(Function, Parameters))
+	{
+		Super::ProcessEvent(Function, Parameters);
+	}
 }
 
 void ARPGPlayerControllerBase::Possess(APawn* NewPawn)

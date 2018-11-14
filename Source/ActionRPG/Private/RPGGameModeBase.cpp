@@ -11,6 +11,13 @@ ARPGGameModeBase::ARPGGameModeBase()
 	PlayerControllerClass = ARPGPlayerControllerBase::StaticClass();
 }
 
+void ARPGGameModeBase::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	PreRegisterLua(LuaFilePath);
+}
+
 void ARPGGameModeBase::BeginPlay()
 {
 	OnInit(LuaFilePath);

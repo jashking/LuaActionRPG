@@ -3,20 +3,24 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
+#include "LuaImplementableInterface.h"
 #include "RPGTypes.h"
 #include "RPGInventoryInterface.h"
 #include "RPGPlayerControllerBase.generated.h"
 
 /** Base class for PlayerController, should be blueprinted */
 UCLASS()
-class ACTIONRPG_API ARPGPlayerControllerBase : public APlayerController, public IRPGInventoryInterface
+class ACTIONRPG_API ARPGPlayerControllerBase : public APlayerController, public IRPGInventoryInterface, public ILuaImplementableInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Constructor and overrides
 	ARPGPlayerControllerBase() {}
+	virtual void PostInitProperties() override;
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
 	virtual void Possess(APawn* NewPawn) override;
 	virtual void UnPossess() override;
 
@@ -127,4 +131,8 @@ protected:
 	void NotifyInventoryItemChanged(bool bAdded, URPGItem* Item);
 	void NotifySlottedItemChanged(FRPGItemSlot ItemSlot, URPGItem* Item);
 	void NotifyInventoryLoaded();
+
+protected:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "LuaImplementable", meta = (AllowPrivateAccess = "true"))
+	FString LuaFilePath;
 };

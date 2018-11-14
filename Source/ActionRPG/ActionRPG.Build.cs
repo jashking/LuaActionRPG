@@ -26,7 +26,8 @@ public class ActionRPG : ModuleRules
 				"GameplayTags",
 				"GameplayTasks",
 				"Liblua",
-				"Bluelua"
+				"Bluelua",
+				"UMG"
 			}
 		);
 
