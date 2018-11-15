@@ -1,14 +1,14 @@
 local m = {}
 
 local Super = Super
-local loadClass = loadClass
-local loadObject = loadObject
-local createDelegate = createDelegate
-local createLatentAction = createLatentAction
+local LoadClass = LoadClass
+local LoadObject = LoadObject
+local CreateDelegate = CreateDelegate
+local CreateLatentAction = CreateLatentAction
 
-local GameplayStatics = loadClass('GameplayStatics')
-local BlueluaLibrary = loadClass('BlueluaLibrary')
-local KismetSystemLibrary = loadClass('KismetSystemLibrary')
+local GameplayStatics = LoadClass('GameplayStatics')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
+local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 
 local WorldContextObject = BlueluaLibrary:GetWorldContext()
 
@@ -17,7 +17,7 @@ function m:ReceiveBeginPlay()
 end
 
 function m:PlayDefaultIntroCutscene()
-    OutActors = GameplayStatics:GetAllActorsOfClass(WorldContextObject, loadClass('LevelSequenceActor'), {})
+    OutActors = GameplayStatics:GetAllActorsOfClass(WorldContextObject, LoadClass('LevelSequenceActor'), {})
     if OutActors[1] then
         local PlayerController = GameplayStatics:GetPlayerController(WorldContextObject, 0)
         PlayerController:ToLuaObject():PlaySkippableCutscene(OutActors[1].SequencePlayer)
@@ -36,7 +36,7 @@ function m:StartGame()
 end
 
 function m:StartPlayTimer()
-    KismetSystemLibrary:K2_SetTimerDelegate(createDelegate(Super, self, self.UpdatePlayTime), 1, true)
+    KismetSystemLibrary:K2_SetTimerDelegate(CreateDelegate(Super, self, self.UpdatePlayTime), 1, true)
     Super.StartTime = GameplayStatics:GetTimeSeconds(WorldContextObject)
 end
 
@@ -53,16 +53,16 @@ end
 
 --[[
 function m:StartEnemySpawn()
-    local LatentActionInfo = createLatentAction(createDelegate(Super, self, self.StartNewWave))
+    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super, self, self.StartNewWave))
 
     KismetSystemLibrary:Delay(WorldContextObject, 1, LatentActionInfo)
 end
 
 function m:StartNewWave()
-    local DataTableFunctionLibrary = loadClass('DataTableFunctionLibrary')
+    local DataTableFunctionLibrary = LoadClass('DataTableFunctionLibrary')
 
     local WavesStruct = loadStruct('/Game/Blueprints/Progression/WavesStruct.WavesStruct')
-    local WavesProgression = loadObject(Super, '/Game/Blueprints/Progression/WavesProgression.WavesProgression')
+    local WavesProgression = LoadObject(Super, '/Game/Blueprints/Progression/WavesProgression.WavesProgression')
 
     local wave = WavesStruct()
     result, row = BlueluaLibrary:GetDataTableRowFromName(WavesProgression, 'Wave_' .. Super.CurrentWave, wave)
@@ -72,14 +72,14 @@ end
 function m:GameOver()
     GameplayStatics:SetGlobalTimeDilation(WorldContextObject, 0.25)
     
-    local LatentActionInfo = createLatentAction(createDelegate(Super,
+    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
         function()
             GameplayStatics:SetGlobalTimeDilation(WorldContextObject, 1)
             GameplayStatics:SetGamePaused(WorldContextObject, true)
 
             if not Super.ResultUI then
-                local WidgetBlueprintLibrary = loadClass('WidgetBlueprintLibrary')
-                local WBInGameFinishClass = loadClass('/Game/Blueprints/WidgetBP/WB_InGame_Finish.WB_InGame_Finish_C')
+                local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
+                local WBInGameFinishClass = LoadClass('/Game/Blueprints/WidgetBP/WB_InGame_Finish.WB_InGame_Finish_C')
                 Super.ResultUI = WidgetBlueprintLibrary:Create(WorldContextObject, WBInGameFinishClass, nil)
             end
 

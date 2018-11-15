@@ -1,14 +1,11 @@
 local m = {}
 
 local Super = Super
-local loadClass = loadClass
-local loadObject = loadObject
-local createDelegate = createDelegate
-local createLatentAction = createLatentAction
+local LoadClass = LoadClass
 
-local GameplayStatics = loadClass('GameplayStatics')
-local BlueluaLibrary = loadClass('BlueluaLibrary')
-local KismetSystemLibrary = loadClass('KismetSystemLibrary')
+local GameplayStatics = LoadClass('GameplayStatics')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
+local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 
 local WorldContextObject = BlueluaLibrary:GetWorldContext()
 
@@ -18,8 +15,8 @@ function m:PlaySkippableCutscene(SequencePlayer)
     SequencePlayer.OnFinished:Add(self, self.StopPlayingSkippableCutscene)
     SequencePlayer:Play()
 
-    local WidgetBlueprintLibrary = loadClass('WidgetBlueprintLibrary')
-    local WBSkipIntroClass = loadClass('/Game/Blueprints/WidgetBP/WB_SkipIntro.WB_SkipIntro_C')
+    local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
+    local WBSkipIntroClass = LoadClass('/Game/Blueprints/WidgetBP/WB_SkipIntro.WB_SkipIntro_C')
     self.SkipIntroWidget = WidgetBlueprintLibrary:Create(WorldContextObject, WBSkipIntroClass, Super)
     self.SkipIntroWidget:AddToViewport(0)
     Super:ShowHUD(false)
