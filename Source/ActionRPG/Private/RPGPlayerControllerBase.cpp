@@ -318,6 +318,32 @@ bool ARPGPlayerControllerBase::LoadInventory()
 	return false;
 }
 
+void ARPGPlayerControllerBase::BindAxisAction(FName AxisName, FInputAxisHandlerDynamicSignature Action)
+{
+	if (!InputComponent)
+	{
+		return;
+	}
+
+	FInputAxisBinding AxisBinding(AxisName);
+	AxisBinding.AxisDelegate.BindDelegate(Action.GetUObject(), Action.GetFunctionName());
+
+	InputComponent->AxisBindings.Emplace(AxisBinding);
+}
+
+void ARPGPlayerControllerBase::BindTouchAction(EInputEvent InputEvent, FInputTouchHandlerDynamicSignature Action)
+{
+	if (!InputComponent)
+	{
+		return;
+	}
+
+	FInputTouchBinding TouchBinding(InputEvent);
+	TouchBinding.TouchDelegate.BindDelegate(Action.GetUObject(), Action.GetFunctionName());
+
+	InputComponent->TouchBindings.Emplace(TouchBinding);
+}
+
 bool ARPGPlayerControllerBase::FillEmptySlotWithItem(URPGItem* NewItem)
 {
 	// Look for an empty item slot to fill with this item
