@@ -1,5 +1,6 @@
 local m = {}
 
+-- parent UObject
 local Super = Super
 
 function m:Construct()

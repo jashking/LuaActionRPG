@@ -1,15 +1,20 @@
 local m = {}
 
+-- parent UObject
 local Super = Super
+
+-- global functions
 local LoadClass = LoadClass
 local LoadObject = LoadObject
 local CreateDelegate = CreateDelegate
 local CreateLatentAction = CreateLatentAction
 
+-- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local BlueluaLibrary = LoadClass('BlueluaLibrary')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 
+-- world context object
 local WorldContextObject = BlueluaLibrary:GetWorldContext()
 
 function m:ReceiveBeginPlay()
