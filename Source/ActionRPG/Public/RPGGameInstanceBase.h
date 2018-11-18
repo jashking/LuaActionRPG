@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
+#include "LuaImplementableInterface.h"
 #include "RPGTypes.h"
 #include "RPGGameInstanceBase.generated.h"
 
@@ -15,7 +16,7 @@ class URPGSaveGame;
  * Once you make a blueprint subclass of your native subclass you will want to set it to be the default in project settings
  */
 UCLASS()
-class ACTIONRPG_API URPGGameInstanceBase : public UGameInstance
+class ACTIONRPG_API URPGGameInstanceBase : public UGameInstance, public ILuaImplementableInterface
 {
 	GENERATED_BODY()
 
@@ -71,6 +72,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Save)
 	void ResetSaveGame();
 
+	virtual void Init() override;
+	virtual void Shutdown() override;
+	virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
+	virtual void PostInitProperties() override;
+
 protected:
 	/** The current save game object */
 	UPROPERTY()
@@ -79,4 +85,7 @@ protected:
 	/** Rather it will attempt to actually save to disk */
 	UPROPERTY()
 	bool bSavingEnabled;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "LuaImplementable", meta = (AllowPrivateAccess = "true"))
+	FString LuaFilePath;
 };

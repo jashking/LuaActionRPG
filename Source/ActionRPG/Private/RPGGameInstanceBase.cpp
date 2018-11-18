@@ -98,3 +98,32 @@ void URPGGameInstanceBase::ResetSaveGame()
 	LoadOrCreateSaveGame();
 	bSavingEnabled = bWasSavingEnabled;
 }
+
+void URPGGameInstanceBase::Init()
+{
+	OnInit(LuaFilePath);
+
+	Super::Init();
+}
+
+void URPGGameInstanceBase::Shutdown()
+{
+	Super::Shutdown();
+
+	OnRelease();
+}
+
+void URPGGameInstanceBase::ProcessEvent(UFunction* Function, void* Parameters)
+{
+	if (!OnProcessEvent(Function, Parameters))
+	{
+		Super::ProcessEvent(Function, Parameters);
+	}
+}
+
+void URPGGameInstanceBase::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	PreRegisterLua(LuaFilePath);
+}
