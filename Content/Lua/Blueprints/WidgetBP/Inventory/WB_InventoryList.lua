@@ -12,6 +12,7 @@ local CreateLatentAction = CreateLatentAction
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local BlueluaLibrary = LoadClass('BlueluaLibrary')
+local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
 
 --TODO: move to common lua
 local EUMGSequencePlayMode = {
@@ -23,15 +24,38 @@ local EUMGSequencePlayMode = {
 function m:Construct()
     self:SetupItemsList()
     Super:PlayAnimation(Super.SwipeInAnimation, 0, 1, EUMGSequencePlayMode.Forward, 1)
+
+    Super.Background.OnMouseButtonDownEvent:Add(
+        function()
+            Super:CloseList()
+            return WidgetBlueprintLibrary:Handled()
+        end)
+
+    Super.ClearSlotButton.OnClicked:Add(self, self.OnClearSlotButtonClicked)
 end
 
 function m:SetupItemsList()
-    Super:AddInventoryItemsToList()
+    self:AddInventoryItemsToList()
     self:AddStoreItemsToList()
     Super.ListTypeLabel:SetText(Super.ItemType.Name)
 end
 
-function m:AddInventoryItemsToList_todo()
+function m:AddInventoryItemsToList()
+    local WBInventoryItemClass = LoadClass('/Game/Blueprints/WidgetBP/Inventory/WB_InventoryItem.WB_InventoryItem_C')
+    local OriginalDefaultItemClass = WBInventoryItemClass.ItemClass
+    local OriginalDefaultOwningList = WBInventoryItemClass.OwningList
+
+    local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
+    local Items = PlayerController:GetInventoryItems(nil, Super.ItemType)
+    for _, Item in ipairs(Items) do
+        WBInventoryItemClass.ItemClass = Item
+        WBInventoryItemClass.OwningList = Super
+        local InventoryItem = WidgetBlueprintLibrary:Create(Super, WBInventoryItemClass, nil)
+        Super.ItemsBox:AddChild(InventoryItem)
+    end
+
+    WBInventoryItemClass.ItemClass = OriginalDefaultItemClass
+    WBInventoryItemClass.OwningList = OriginalDefaultOwningList
 end
 
 function m:AddStoreItemsToList()
@@ -41,7 +65,6 @@ function m:AddStoreItemsToList()
     end
 
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
-    local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
     local WBPurchaseItemClass = LoadClass('/Game/Blueprints/WidgetBP/Inventory/WB_PurchaseItem.WB_PurchaseItem_C')
     local OriginalDefaultItemClass = WBPurchaseItemClass.ItemClass
     local OriginalDefaultOwningList = WBPurchaseItemClass.OwningList
@@ -58,6 +81,12 @@ function m:AddStoreItemsToList()
 
     WBPurchaseItemClass.ItemClass = OriginalDefaultItemClass
     WBPurchaseItemClass.OwningList = OriginalDefaultOwningList
+end
+
+function m:OnClearSlotButtonClicked()
+    local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
+    PlayerController:SetSlottedItem(Super.EquipmentButton.EquipSlot, nil)
+    Super:CloseList()
 end
 
 return m
