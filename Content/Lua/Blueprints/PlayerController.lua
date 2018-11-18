@@ -10,12 +10,8 @@ local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
-local BlueluaLibrary = LoadClass('BlueluaLibrary')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local KismetMathLibrary = LoadClass('KismetMathLibrary')
-
--- world context object
-local WorldContextObject = BlueluaLibrary:GetWorldContext()
 
 function m:PlaySkippableCutscene(SequencePlayer)
     Super.SequencePlayer = SequencePlayer
@@ -25,7 +21,7 @@ function m:PlaySkippableCutscene(SequencePlayer)
 
     local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
     local WBSkipIntroClass = LoadClass('/Game/Blueprints/WidgetBP/WB_SkipIntro.WB_SkipIntro_C')
-    self.SkipIntroWidget = WidgetBlueprintLibrary:Create(WorldContextObject, WBSkipIntroClass, Super)
+    self.SkipIntroWidget = WidgetBlueprintLibrary:Create(Super, WBSkipIntroClass, Super)
     self.SkipIntroWidget:AddToViewport(0)
     self:ShowHUD(false)
 end
@@ -39,7 +35,7 @@ function m:StopPlayingSkippableCutscene()
     Super.SequencePlayer:Stop()
     self:ShowHUD(true)
 
-    local GameMode = GameplayStatics:GetGameMode(WorldContextObject)
+    local GameMode = GameplayStatics:GetGameMode(Super)
     GameMode:ToLuaObject():StartGame()
 
     self.SkipIntroWidget:RemoveFromParent()
@@ -72,7 +68,7 @@ function m:CreateHUD()
     
     local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
     local WBOnScreenControlsClass = LoadClass('/Game/Blueprints/WidgetBP/WB_OnScreenControls.WB_OnScreenControls_C')
-    Super.OnScreenControls = WidgetBlueprintLibrary:Create(WorldContextObject, WBOnScreenControlsClass, Super)
+    Super.OnScreenControls = WidgetBlueprintLibrary:Create(Super, WBOnScreenControlsClass, Super)
     Super.OnScreenControls:AddToViewport(0)
     Super.OnScreenControls:UpdateCurrentIcons()
 end
@@ -93,7 +89,7 @@ function m:ReceivePossess(NewPawn)
             Super.PlayerCharacter:CreateAllWeapons()
         end))
 
-    KismetSystemLibrary:Delay(WorldContextObject, 0.025, LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, 0.025, LatentActionInfo)
 end
 
 -- bool bAdded, URPGItem* Item
@@ -112,7 +108,7 @@ function m:IsRunningOnMobile()
 end
 
 function m:ReceiveTick(DeltaSeconds)
-    local GameMode = GameplayStatics:GetGameMode(WorldContextObject)
+    local GameMode = GameplayStatics:GetGameMode(Super)
     local ControlledPawn = Super:K2_GetPawn()
     if GameMode.bAutoBattleMode or not ControlledPawn or Super.bBlockedMovement then
         return

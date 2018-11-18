@@ -11,10 +11,6 @@ local CreateLatentAction = CreateLatentAction
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
-local BlueluaLibrary = LoadClass('BlueluaLibrary')
-
--- world context object
-local WorldContextObject = BlueluaLibrary:GetWorldContext()
 
 --TODO: move to common lua
 local EUMGSequencePlayMode = {
@@ -35,24 +31,24 @@ function m:OnCloseButtonClicked()
 
     local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
         function()
-            local GameMode = GameplayStatics:GetGameMode(WorldContextObject)
+            local GameMode = GameplayStatics:GetGameMode(Super)
             GameMode:PauseGame()
             
             Super:RemoveFromParent()
         end))
 
-    KismetSystemLibrary:Delay(WorldContextObject, Super.FadeAnimation:GetEndTime(), LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), LatentActionInfo)
 end
 
 function m:OnOptionsButtonClicked()
     local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
     local WBOptionsScreenClass = LoadClass('/Game/Blueprints/WidgetBP/WB_OptionsScreen.WB_OptionsScreen_C')
-    local OptionsScreen = WidgetBlueprintLibrary:Create(WorldContextObject, WBOptionsScreenClass, nil)
+    local OptionsScreen = WidgetBlueprintLibrary:Create(Super, WBOptionsScreenClass, nil)
     OptionsScreen:AddToViewport(0)
 end
 
 function m:OnMainMenuButtonClicked()
-    GameplayStatics:OpenLevel(WorldContextObject, 'ActionRPG_Main', true, nil)
+    GameplayStatics:OpenLevel(Super, 'ActionRPG_Main', true, nil)
 end
 
 return m

@@ -6,11 +6,9 @@ local Super = Super
 function m:Construct()
     Super.SkipButton.OnClicked:Add(
         function ()
-            local BlueluaLibrary = LoadClass('BlueluaLibrary')
             local GameplayStatics = LoadClass('GameplayStatics')
+            local PlayerController = GameplayStatics:GetPlayerController(Super, 0):ToLuaObject()
             
-            local WorldContextObject = BlueluaLibrary:GetWorldContext()
-            local PlayerController = GameplayStatics:GetPlayerController(WorldContextObject, 0):ToLuaObject()
             PlayerController:StopPlayingSkippableCutscene()
             Super:RemoveFromParent()
         end)

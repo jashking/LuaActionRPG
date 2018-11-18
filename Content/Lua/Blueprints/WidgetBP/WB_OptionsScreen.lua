@@ -11,10 +11,6 @@ local CreateLatentAction = CreateLatentAction
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
-local BlueluaLibrary = LoadClass('BlueluaLibrary')
-
--- world context object
-local WorldContextObject = BlueluaLibrary:GetWorldContext()
 
 --TODO: move to common lua
 local EUMGSequencePlayMode = {
@@ -26,7 +22,7 @@ local EUMGSequencePlayMode = {
 function m:Construct()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, EUMGSequencePlayMode.Forward, 1)
 
-    local GameInstance = GameplayStatics:GetGameInstance(WorldContextObject)
+    local GameInstance = GameplayStatics:GetGameInstance(Super)
     Super.CurrentOptions = GameInstance:GetGlobalOptions(nil)
 
     Super.ClearSaveButton.OnClicked:Add(self, self.OnClearSaveButtonClicked)
@@ -43,12 +39,12 @@ function m:SetupUI()
     --Super.Vibration_Checkbox:SetIsChecked(Super.CurrentOptions.bVibration)
     --Super.Shake_Checkbox:SetIsChecked(Super.CurrentOptions.bCameraShake)
 
-    local PlayerController = GameplayStatics:GetPlayerController(WorldContextObject, 0):ToLuaObject()
+    local PlayerController = GameplayStatics:GetPlayerController(Super, 0):ToLuaObject()
     Super.ClearSaveButton:SetIsEnabled((PlayerController == nil) and true or false)
 end
 
 function m:OnClearSaveButtonClicked()
-    local GameInstance = GameplayStatics:GetGameInstance(WorldContextObject)
+    local GameInstance = GameplayStatics:GetGameInstance(Super)
     GameInstance:ClearSaveData()
 end
 
@@ -77,13 +73,13 @@ function m:OnCloseButtonClicked()
             Super.CurrentOptions.bVibration = true
             Super.CurrentOptions.bCameraShake = true
 
-            local GameInstance = GameplayStatics:GetGameInstance(WorldContextObject)
+            local GameInstance = GameplayStatics:GetGameInstance(Super)
             GameInstance:SetGlobalOptions(Super.CurrentOptions, false)
 
             Super:RemoveFromParent()
         end))
 
-    KismetSystemLibrary:Delay(WorldContextObject, Super.FadeAnimation:GetEndTime(), LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), LatentActionInfo)
 end
 
 return m
