@@ -13,6 +13,9 @@ local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local KismetMathLibrary = LoadClass('KismetMathLibrary')
 
+-- Common
+local Common = require 'Lua.Blueprints.Common'
+
 function m:PlaySkippableCutscene(SequencePlayer)
     Super.SequencePlayer = SequencePlayer
 
@@ -43,19 +46,11 @@ function m:StopPlayingSkippableCutscene()
 end
 
 function m:ShowHUD(bShow)
-    local bRunningOnMobile = self:IsRunningOnMobile()
+    local bRunningOnMobile = Common:IsRunningOnMobile()
     Super:SetVirtualJoystickVisibility(bShow and bRunningOnMobile)
 
-    --TODO: move to common lua
-    local ESlateVisibility = {
-        Visible = 0,
-        Collapsed = 1,
-        Hidden = 2,
-        HitTestInvisible = 3,
-        SelfHitTestInvisible = 4,
-    }
-
     if Super.OnScreenControls then
+        local ESlateVisibility = Common.ESlateVisibility
         Super.OnScreenControls:SetVisibility(bShow and ESlateVisibility.SelfHitTestInvisible or ESlateVisibility.Hidden)
     end
 end
@@ -97,16 +92,6 @@ function m:OnInventoryItemChanged(bAdded, Item)
     Super:HandleInventoryItemChanged(bAdded, Item)
 end
 
---TODO: move to common lua
-function m:IsRunningOnMobile()
-    local PlatformName = GameplayStatics:GetPlatformName()
-    if PlatformName == 'Android' or PlatformName == 'IOS' then
-        return true, PlatformName
-    end
-
-    return false, PlatformName
-end
-
 function m:ReceiveTick(DeltaSeconds)
     local GameMode = GameplayStatics:GetGameMode(Super)
     local ControlledPawn = Super:K2_GetPawn()
@@ -135,16 +120,7 @@ function m:ReceiveBeginPlay()
     Super:BindAxisAction('MoveRight', nil)
     Super:BindAxisAction('RotateCamera', CreateDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end))
 
-    --TODO: move to common lua
-    local EInputEvent = {
-        IE_Pressed = 0,
-        IE_Released = 1,
-        IE_Repeat = 2,
-        IE_DoubleClick = 3,
-        IE_Axis = 4,
-        IE_MAX = 5,
-    }
-
+    local EInputEvent = Common.EInputEvent
     Super:BindTouchAction(EInputEvent.IE_Pressed, CreateDelegate(Super, self, self.OnTouchPressed))
     Super:BindTouchAction(EInputEvent.IE_Repeat, CreateDelegate(Super, self, self.OnTouchRepeated))
     Super:BindTouchAction(EInputEvent.IE_Released, CreateDelegate(Super, self, self.OnTouchReleased))

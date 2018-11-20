@@ -3,6 +3,9 @@ local m = {}
 -- parent UObject
 local Super = Super
 
+-- Common
+local Common = require 'Lua.Blueprints.Common'
+
 function m:Construct()
     Super.SkipButton.OnClicked:Add(
         function ()
@@ -13,14 +16,7 @@ function m:Construct()
             Super:RemoveFromParent()
         end)
 
-    --TODO: move to common lua
-    local EUMGSequencePlayMode = {
-        Forward = 0,
-        Reverse = 1,
-        PingPong = 2,
-    }
-    
-    Super:PlayAnimation(Super.SkipTextAnim, 0, 0, EUMGSequencePlayMode.Forward, 0.5)
+    Super:PlayAnimation(Super.SkipTextAnim, 0, 0, Common.EUMGSequencePlayMode.Forward, 0.5)
 end
 
 return m

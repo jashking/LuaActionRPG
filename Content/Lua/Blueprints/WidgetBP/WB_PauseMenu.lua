@@ -12,22 +12,18 @@ local CreateLatentAction = CreateLatentAction
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 
---TODO: move to common lua
-local EUMGSequencePlayMode = {
-    Forward = 0,
-    Reverse = 1,
-    PingPong = 2,
-}
+-- Common
+local Common = require 'Lua.Blueprints.Common'
 
 function m:Construct()
-    Super:PlayAnimation(Super.FadeAnimation, 0, 1, EUMGSequencePlayMode.Forward, 1)
+    Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
     Super.CloseButton.OnClicked:Add(self, self.OnCloseButtonClicked)
     Super.OptionsButton.OnClicked:Add(self, self.OnOptionsButtonClicked)
     Super.MainMenuButton.OnClicked:Add(self, self.OnMainMenuButtonClicked)
 end
 
 function m:OnCloseButtonClicked()
-    Super:PlayAnimation(Super.FadeAnimation, 0, 1, EUMGSequencePlayMode.Reverse, 1)
+    Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
 
     local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
         function()

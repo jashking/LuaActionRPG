@@ -14,16 +14,12 @@ local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local BlueluaLibrary = LoadClass('BlueluaLibrary')
 local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
 
---TODO: move to common lua
-local EUMGSequencePlayMode = {
-    Forward = 0,
-    Reverse = 1,
-    PingPong = 2,
-}
+-- Common
+local Common = require 'Lua.Blueprints.Common'
 
 function m:Construct()
     self:SetupItemsList()
-    Super:PlayAnimation(Super.SwipeInAnimation, 0, 1, EUMGSequencePlayMode.Forward, 1)
+    Super:PlayAnimation(Super.SwipeInAnimation, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
     Super.Background.OnMouseButtonDownEvent:Add(
         function()
