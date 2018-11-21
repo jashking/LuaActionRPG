@@ -45,7 +45,7 @@ function m:OnStartGameButtonClicked()
 
     local GameInstance = GameplayStatics:GetGameInstance(Super):ToLuaObject()
     if GameInstance then
-        GameInstance:LoadGameLevel_lua()
+        GameInstance:LoadGameLevel()
     end
 end
 
@@ -54,9 +54,6 @@ function m:OnOptionsButtonClicked()
     local WBOptionsScreenClass = LoadClass('/Game/Blueprints/WidgetBP/WB_OptionsScreen.WB_OptionsScreen_C')
     WBOptionsScreen = WidgetBlueprintLibrary:Create(Super, WBOptionsScreenClass, nil)
     WBOptionsScreen:AddToViewport(0)
-end
-
-function m:OnOnlineLoginButtonClicked()
 end
 
 function m:OnQuitGameButtonClicked()

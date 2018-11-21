@@ -90,4 +90,8 @@ function m:GameOver()
     KismetSystemLibrary:Delay(Super, 0.5, LatentActionInfo)
 end
 
+function m:GoHome()
+    GameplayStatics:OpenLevel(Super, 'ActionRPG_Main', true, nil)
+end
+
 return m
