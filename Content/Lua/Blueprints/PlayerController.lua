@@ -87,9 +87,10 @@ function m:ReceivePossess(NewPawn)
     KismetSystemLibrary:Delay(Super, 0.025, LatentActionInfo)
 end
 
--- bool bAdded, URPGItem* Item
 function m:OnInventoryItemChanged(bAdded, Item)
-    Super:HandleInventoryItemChanged(bAdded, Item)
+    if KismetMathLibrary:EqualEqual_ObjectObject(Super.SoulsItem, Item) and self.OnSoulsUpdated then
+        self.OnSoulsUpdated(nil, Super:GetInventoryItemCount(Super.SoulsItem))
+    end
 end
 
 function m:ReceiveTick(DeltaSeconds)
