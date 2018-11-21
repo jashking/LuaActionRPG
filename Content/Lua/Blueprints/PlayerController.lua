@@ -65,7 +65,7 @@ function m:CreateHUD()
     local WBOnScreenControlsClass = LoadClass('/Game/Blueprints/WidgetBP/WB_OnScreenControls.WB_OnScreenControls_C')
     Super.OnScreenControls = WidgetBlueprintLibrary:Create(Super, WBOnScreenControlsClass, Super)
     Super.OnScreenControls:AddToViewport(0)
-    Super.OnScreenControls:UpdateCurrentIcons()
+    Super.OnScreenControls:ToLuaObject():UpdateCurrentIcons_lua()
 end
 
 function m:ReceivePossess(NewPawn)

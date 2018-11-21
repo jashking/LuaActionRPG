@@ -12,6 +12,7 @@ local CreateLatentAction = CreateLatentAction
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
+local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
 
 function m:ReceiveBeginPlay()
     self:PlayDefaultIntroCutscene()
@@ -70,6 +71,17 @@ function m:StartNewWave()
 end
 --]]
 
+function m:PauseGame()
+    if GameplayStatics:IsGamePaused(Super) then
+        GameplayStatics:SetGamePaused(Super, false)
+    else
+        local WBPauseMenuClass = LoadClass('/Game/Blueprints/WidgetBP/WB_PauseMenu.WB_PauseMenu_C')
+        local PauseMenu = WidgetBlueprintLibrary:Create(Super, WBPauseMenuClass, GameplayStatics:GetPlayerController(Super, 0))
+        PauseMenu:AddToViewport(0)
+        GameplayStatics:SetGamePaused(Super, true)
+    end
+end
+
 function m:GameOver()
     GameplayStatics:SetGlobalTimeDilation(Super, 0.25)
     
@@ -79,7 +91,6 @@ function m:GameOver()
             GameplayStatics:SetGamePaused(Super, true)
 
             if not Super.ResultUI then
-                local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
                 local WBInGameFinishClass = LoadClass('/Game/Blueprints/WidgetBP/WB_InGame_Finish.WB_InGame_Finish_C')
                 Super.ResultUI = WidgetBlueprintLibrary:Create(Super, WBInGameFinishClass, nil)
             end

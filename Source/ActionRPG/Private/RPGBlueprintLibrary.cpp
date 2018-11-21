@@ -77,3 +77,18 @@ TArray<FActiveGameplayEffectHandle> URPGBlueprintLibrary::ApplyExternalEffectCon
 	}
 	return AllEffects;
 }
+
+FGameplayTag URPGBlueprintLibrary::MakeGameplayTag(FName TagName)
+{
+	return FGameplayTag::RequestGameplayTag(TagName);
+}
+
+void URPGBlueprintLibrary::AddGameplayTagToContainer(FGameplayTagContainer& TagContainer, const FGameplayTag& Tag)
+{
+	TagContainer.AddTag(Tag);
+}
+
+FRPGItemSlot URPGBlueprintLibrary::MakeRPGItemSlot(FName PrimaryAssetTypeName, int32 InSlotNumber)
+{
+	return FRPGItemSlot(FPrimaryAssetType(PrimaryAssetTypeName), InSlotNumber);
+}

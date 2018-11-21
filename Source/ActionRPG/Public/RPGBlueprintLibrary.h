@@ -55,4 +55,13 @@ public:
 	/** Applies container spec that was made from an ability */
 	UFUNCTION(BlueprintCallable, Category = Ability)
 	static TArray<FActiveGameplayEffectHandle> ApplyExternalEffectContainerSpec(const FRPGGameplayEffectContainerSpec& ContainerSpec);
+
+	UFUNCTION(BlueprintCallable, Category = GamePlay)
+	static FGameplayTag MakeGameplayTag(FName TagName);
+
+	UFUNCTION(BlueprintCallable, Category = GamePlay)
+	static void AddGameplayTagToContainer(FGameplayTagContainer& TagContainer, const FGameplayTag& Tag);
+
+	UFUNCTION(BlueprintCallable, Category = Item)
+	static FRPGItemSlot MakeRPGItemSlot(FName PrimaryAssetTypeName, int32 InSlotNumber);
 };
