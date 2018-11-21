@@ -23,6 +23,11 @@ m.EUMGSequencePlayMode = {
     PingPong = 2,
 }
 
+m.EQuitPreference = {
+    Quit = 0,
+    Background = 1,
+}
+
 function m:IsRunningOnMobile()
     local LoadClass = LoadClass
     local GameplayStatics = LoadClass('GameplayStatics')

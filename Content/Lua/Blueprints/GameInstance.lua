@@ -63,4 +63,18 @@ function m:GetStoreItems(ItemType)
     return FilterItems
 end
 
+function m:FadeInAndShowLoadingScreen_lua()
+    local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
+    RPGBlueprintLibrary:PlayLoadingScreen(true, 3)
+end
+
+function m:LoadGameLevel_lua()
+    local WidgetLayoutLibrary = LoadClass('WidgetLayoutLibrary')
+    WidgetLayoutLibrary:RemoveAllWidgets(Super)
+
+    self:FadeInAndShowLoadingScreen_lua()
+
+    GameplayStatics:OpenLevel(Super, 'ActionRPG_P', false, nil)
+end
+
 return m
