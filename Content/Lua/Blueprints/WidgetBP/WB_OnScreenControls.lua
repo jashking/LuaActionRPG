@@ -61,7 +61,7 @@ function m:OnPotionButtonClicked()
 end
 
 function m:OnInventoryButtonClicked()
-    local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
+    local PlayerController = GameplayStatics:GetPlayerController(Super, 0):ToLuaObject()
     PlayerController:ShowInventoryUI()
 end
 

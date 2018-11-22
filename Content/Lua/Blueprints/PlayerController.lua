@@ -12,6 +12,7 @@ local CreateLatentAction = CreateLatentAction
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local KismetMathLibrary = LoadClass('KismetMathLibrary')
+local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
 
 -- Common
 local Common = require 'Lua.Blueprints.Common'
@@ -144,6 +145,36 @@ end
 
 function m:OnTouchReleased(FingerIndex, Location)
     Super.bCanRotate = false
+end
+
+function m:ShowInventoryUI()
+    if not self.UIEquippeditem_Delegate then
+        self.UIEquippeditem_Delegate = Super.OnSlottedItemChanged:Add(self, self.UIEquippeditem)
+    end
+
+    if Super.InventoryUI then
+        Super.InventoryUI:RemoveFromParent()
+        GameplayStatics:SetGamePaused(Super, false)
+        Super.PlayerCharacter:ActivateInventoryCamera(false)
+        Super.InventoryUI = nil
+        Super.OnScreenControls:SetVisibility(Common.ESlateVisibility.SelfHitTestInvisible)
+    else
+        local WBEquipmentClass = LoadClass('/Game/Blueprints/WidgetBP/Inventory/WB_Equipment.WB_Equipment_C')
+        Super.InventoryUI = WidgetBlueprintLibrary:Create(Super, WBEquipmentClass, nil)
+        Super.InventoryUI:AddToViewport(0)
+
+        GameplayStatics:SetGamePaused(Super, true)
+        Super.PlayerCharacter:ActivateInventoryCamera(true)
+        Super.OnScreenControls:SetVisibility(Common.ESlateVisibility.Hidden)
+    end
+end
+
+function m:UIEquippeditem(ItemSlot, Item)
+    Super.OnScreenControls:ToLuaObject():UpdateCurrentIcons_lua()
+    
+    if ItemSlot.ItemType.Name == 'Weapon' then
+        Super.PlayerCharacter:CreateAllWeapons()
+    end
 end
 
 return m
