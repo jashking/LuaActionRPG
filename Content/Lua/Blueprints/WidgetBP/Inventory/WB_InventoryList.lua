@@ -11,7 +11,6 @@ local CreateLatentAction = CreateLatentAction
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
-local BlueluaLibrary = LoadClass('BlueluaLibrary')
 local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
 
 -- Common
@@ -23,7 +22,7 @@ function m:Construct()
 
     Super.Background.OnMouseButtonDownEvent:Add(
         function()
-            Super:CloseList()
+            self:CloseList()
             return WidgetBlueprintLibrary:Handled()
         end)
 
@@ -82,7 +81,18 @@ end
 function m:OnClearSlotButtonClicked()
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
     PlayerController:SetSlottedItem(Super.EquipmentButton.EquipSlot, nil)
-    Super:CloseList()
+    self:CloseList()
+end
+
+function m:CloseList()
+    Super:PlayAnimation(Super.SwipeInAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
+
+    local LatentAction = CreateLatentAction(CreateDelegate(Super,
+        function()
+            Super:RemoveFromParent()
+        end))
+
+    KismetSystemLibrary:Delay(Super, Super.SwipeInAnimation:GetEndTime(), LatentAction)
 end
 
 return m

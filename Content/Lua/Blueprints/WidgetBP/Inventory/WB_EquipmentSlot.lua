@@ -13,7 +13,7 @@ local GameplayStatics = LoadClass('GameplayStatics')
 local Common = require 'Lua.Blueprints.Common'
 
 function m:Construct()
-    self:RefreshItem_lua()
+    self:RefreshItem()
 
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
     PlayerController.OnSlottedItemChanged:Add(self, self.OnSlottedItemChanged)
@@ -22,7 +22,7 @@ function m:Construct()
     Super.EquipButton.OnClicked:Add(self, self.OnEquipButtonClicked)
 end
 
-function m:RefreshItem_lua()
+function m:RefreshItem()
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
     local Item = PlayerController:GetSlottedItem(Super.EquipSlot)
 
@@ -32,7 +32,7 @@ end
 function m:OnSlottedItemChanged(ItemSlot, Item)
     local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
     if RPGBlueprintLibrary:EqualEqual_RPGItemSlot(ItemSlot, Super.EquipSlot) then
-        self:RefreshItem_lua()
+        self:RefreshItem()
     end
 end
 
@@ -52,11 +52,11 @@ function m:OnEquipButtonClicked()
     WBInventoryListClass.ItemType = OriginalItemType
 end
 
-function m:UpdateEquipmentSlot_lua(Item)
+function m:UpdateEquipmentSlot(Item)
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
     PlayerController:SetSlottedItem(Super.EquipSlot, Item)
 
-    self:RefreshItem_lua()
+    self:RefreshItem()
 
     local GameInstance = GameplayStatics:GetGameInstance(Super)
     GameInstance:WriteSaveGame()

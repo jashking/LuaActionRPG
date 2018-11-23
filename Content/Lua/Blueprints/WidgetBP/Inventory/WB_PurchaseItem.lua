@@ -42,8 +42,8 @@ function m:OnClickedConfirm()
         print('Purchase: Purchase was sucesfull')
 
         local OwningList = Super.OwningList
-        OwningList.EquipmentButton:UpdateEquipmentSlot(Super.ItemClass)
-        OwningList:CloseList()
+        OwningList.EquipmentButton:ToLuaObject():UpdateEquipmentSlot(Super.ItemClass)
+        OwningList:ToLuaObject():CloseList()
     else
         print("Can't touch this...")
     end
