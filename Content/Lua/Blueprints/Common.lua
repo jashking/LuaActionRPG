@@ -28,6 +28,13 @@ m.EQuitPreference = {
     Background = 1,
 }
 
+m.ECollisionEnabled = {
+    NoCollision = 0,
+    QueryOnly = 1,
+    PhysicsOnly = 2,
+    QueryAndPhysics = 3,
+}
+
 function m:IsRunningOnMobile()
     local LoadClass = LoadClass
     local GameplayStatics = LoadClass('GameplayStatics')

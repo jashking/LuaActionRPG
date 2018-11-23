@@ -85,4 +85,17 @@ function m:HitPause()
     KismetSystemLibrary:Delay(Super, 0.1, self.HitPauseStartLatentAction)
 end
 
+function m:BeginWeaponAttack(EventTag, AttackDelayTime, MaxAttackDelayCount)
+    Super.AttackEventTag = EventTag
+    Super.AttackDelayTime = AttackDelayTime
+    Super.AttackDelayCount = MaxAttackDelayCount
+    Super.IsAttacking = true
+    Super.CapsuleCollision:SetCollisionEnabled(Common.ECollisionEnabled.QueryOnly)
+end
+
+function m:EndWeaponAttack()
+    Super.IsAttacking = false
+    Super.CapsuleCollision:SetCollisionEnabled(Common.ECollisionEnabled.NoCollision)
+end
+
 return m
