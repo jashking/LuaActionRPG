@@ -32,6 +32,13 @@ void ARPGGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	OnRelease();
 }
 
+void ARPGGameModeBase::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	OnRelease();
+}
+
 void ARPGGameModeBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
 	if (!OnProcessEvent(Function, Parameters))

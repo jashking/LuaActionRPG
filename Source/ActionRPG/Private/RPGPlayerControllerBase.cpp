@@ -421,6 +421,13 @@ void ARPGPlayerControllerBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	OnRelease();
 }
 
+void ARPGPlayerControllerBase::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	OnRelease();
+}
+
 void ARPGPlayerControllerBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
 	if (!OnProcessEvent(Function, Parameters))

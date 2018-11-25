@@ -74,6 +74,7 @@ public:
 
 	virtual void Init() override;
 	virtual void Shutdown() override;
+	virtual void BeginDestroy() override;
 	virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
 	virtual void PostInitProperties() override;
 

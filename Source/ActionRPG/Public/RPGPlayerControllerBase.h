@@ -20,6 +20,7 @@ public:
 	virtual void PostInitProperties() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void BeginDestroy() override;
 	virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
 	virtual void Possess(APawn* NewPawn) override;
 	virtual void UnPossess() override;

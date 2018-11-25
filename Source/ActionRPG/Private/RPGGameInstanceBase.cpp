@@ -113,6 +113,13 @@ void URPGGameInstanceBase::Shutdown()
 	OnRelease();
 }
 
+void URPGGameInstanceBase::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	OnRelease();
+}
+
 void URPGGameInstanceBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
 	if (!OnProcessEvent(Function, Parameters))
