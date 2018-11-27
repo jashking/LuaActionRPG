@@ -64,4 +64,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Item)
 	static FRPGItemSlot MakeRPGItemSlot(FName PrimaryAssetTypeName, int32 InSlotNumber);
+
+	UFUNCTION(BlueprintCallable)
+	static void BindAction(AActor* TargetActor, FName ActionName, EInputEvent KeyEvent, FInputActionHandlerDynamicSignature Action);
+
+	UFUNCTION(BlueprintCallable)
+	static void BindAxisAction(AActor* TargetActor, FName AxisName, FInputAxisHandlerDynamicSignature Action);
+
+	UFUNCTION(BlueprintCallable)
+	static void BindTouchAction(AActor* TargetActor, EInputEvent InputEvent, FInputTouchHandlerDynamicSignature Action);
 };

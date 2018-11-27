@@ -9,6 +9,7 @@
 #include "AbilitySystemInterface.h"
 #include "Abilities/RPGAbilitySystemComponent.h"
 #include "Abilities/RPGAttributeSet.h"
+#include "LuaImplementableInterface.h"
 #include "RPGCharacterBase.generated.h"
 
 class URPGGameplayAbility;
@@ -16,7 +17,7 @@ class UGameplayEffect;
 
 /** Base class for Character, Designed to be blueprinted */
 UCLASS()
-class ACTIONRPG_API ARPGCharacterBase : public ACharacter, public IAbilitySystemInterface
+class ACTIONRPG_API ARPGCharacterBase : public ACharacter, public IAbilitySystemInterface, public ILuaImplementableInterface
 {
 	GENERATED_BODY()
 
@@ -27,6 +28,12 @@ public:
 	virtual void UnPossessed() override;
 	virtual void OnRep_Controller() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual void PostInitProperties() override;
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void BeginDestroy() override;
+	virtual void ProcessEvent(UFunction* Function, void* Parameters) override final;
 
 	// Implement IAbilitySystemInterface
 	UAbilitySystemComponent* GetAbilitySystemComponent() const override;
@@ -195,4 +202,7 @@ protected:
 
 	// Friended to allow access to handle functions above
 	friend URPGAttributeSet;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "LuaImplementable", meta = (AllowPrivateAccess = "true"))
+	FString LuaFilePath;
 };

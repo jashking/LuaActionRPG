@@ -243,6 +243,42 @@ void ARPGCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(ARPGCharacterBase, CharacterLevel);
 }
 
+void ARPGCharacterBase::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	PreRegisterLua(LuaFilePath);
+}
+
+void ARPGCharacterBase::BeginPlay()
+{
+	OnInit(LuaFilePath);
+
+	Super::BeginPlay();
+}
+
+void ARPGCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	OnRelease();
+}
+
+void ARPGCharacterBase::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	OnRelease();
+}
+
+void ARPGCharacterBase::ProcessEvent(UFunction* Function, void* Parameters)
+{
+	if (!OnProcessEvent(Function, Parameters))
+	{
+		Super::ProcessEvent(Function, Parameters);
+	}
+}
+
 float ARPGCharacterBase::GetHealth() const
 {
 	return AttributeSet->GetHealth();

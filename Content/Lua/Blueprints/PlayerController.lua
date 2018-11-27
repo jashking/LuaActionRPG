@@ -118,14 +118,16 @@ function m:ReceiveTick(DeltaSeconds)
 end
 
 function m:ReceiveBeginPlay()
-    Super:BindAxisAction('MoveForward', nil)
-    Super:BindAxisAction('MoveRight', nil)
-    Super:BindAxisAction('RotateCamera', CreateDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end))
+    local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
+
+    RPGBlueprintLibrary:BindAxisAction(Super, 'MoveForward', nil)
+    RPGBlueprintLibrary:BindAxisAction(Super, 'MoveRight', nil)
+    RPGBlueprintLibrary:BindAxisAction(Super, 'RotateCamera', CreateDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end))
 
     local EInputEvent = Common.EInputEvent
-    Super:BindTouchAction(EInputEvent.IE_Pressed, CreateDelegate(Super, self, self.OnTouchPressed))
-    Super:BindTouchAction(EInputEvent.IE_Repeat, CreateDelegate(Super, self, self.OnTouchRepeated))
-    Super:BindTouchAction(EInputEvent.IE_Released, CreateDelegate(Super, self, self.OnTouchReleased))
+    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Pressed, CreateDelegate(Super, self, self.OnTouchPressed))
+    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Repeat, CreateDelegate(Super, self, self.OnTouchRepeated))
+    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Released, CreateDelegate(Super, self, self.OnTouchReleased))
 end
 
 function m:OnTouchPressed(FingerIndex, Location)

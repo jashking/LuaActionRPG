@@ -49,7 +49,7 @@ function m:SetSafemargins()
 end
 
 function m:OnNormalAttackButtonClicked()
-    Super.PlayerCharacter:DoMeleeAttack()
+    Super.PlayerCharacter:ToLuaObject():DoMeleeAttack()
 end
 
 function m:OnRollingButtonClicked()
@@ -73,7 +73,7 @@ function m:OnPauseButtonClicked()
 end
 
 function m:OnUseSkillButtonClicked()
-    Super.PlayerCharacter:DoSkillAttack()
+    Super.PlayerCharacter:ToLuaObject():DoSkillAttack()
 
     if not self.CooldownSkillTag then
         local FGameplayTagContainer = LoadStruct('GameplayTagContainer')

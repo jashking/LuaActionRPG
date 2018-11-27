@@ -102,12 +102,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	bool LoadInventory();
 
-	UFUNCTION(BlueprintCallable)
-	void BindAxisAction(FName AxisName, FInputAxisHandlerDynamicSignature Action);
-
-	UFUNCTION(BlueprintCallable)
-	void BindTouchAction(EInputEvent InputEvent, FInputTouchHandlerDynamicSignature Action);
-
 	// Implement IRPGInventoryInterface
 	virtual const TMap<URPGItem*, FRPGItemData>& GetInventoryDataMap() const override
 	{
