@@ -1,6 +1,8 @@
 -- global functions
 local LoadClass = LoadClass
 local CreateDelegate = CreateDelegate
+local LoadObject = LoadObject
+local LoadStruct = LoadStruct
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
@@ -19,13 +21,17 @@ function m:ReceiveBeginPlay()
     self.Super:SetTickableWhenPaused(true)
     local CameraManager = GameplayStatics:GetPlayerCameraManager(self.Super, 0)
     CameraManager:StartCameraFade(1, 0, 1, KismetMathLibrary:MakeColor(0, 0, 0, 1), false, false)
+end
 
+function m:OnSetupPlayerInput()
     local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
-    local PlayerController = GameplayStatics:GetPlayerController(self.Super, 0)
-    RPGBlueprintLibrary:BindAction(PlayerController, 'NormalAttack', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnNormalAttack))
-    RPGBlueprintLibrary:BindAction(PlayerController, 'SpecialAttack', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnSpecialAttack))
-    RPGBlueprintLibrary:BindAction(PlayerController, 'Roll', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnRoll))
-    RPGBlueprintLibrary:BindAction(PlayerController, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnChangeWeapon))
+    RPGBlueprintLibrary:BindAction(self.Super, 'NormalAttack', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnNormalAttack))
+    RPGBlueprintLibrary:BindAction(self.Super, 'SpecialAttack', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnSpecialAttack))
+    RPGBlueprintLibrary:BindAction(self.Super, 'Roll', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnRoll))
+    RPGBlueprintLibrary:BindAction(self.Super, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.SwitchWeapon))
+
+    RPGBlueprintLibrary:BindAxisAction(self.Super, 'MoveForward', nil)
+    RPGBlueprintLibrary:BindAxisAction(self.Super, 'MoveRight', nil)
 end
 
 function m:OnManaChanged(DeltaValue, EventTags)
@@ -66,11 +72,11 @@ function m:OnSpecialAttack()
 end
 
 function m:OnRoll()
-    self.Super:DoRoll()
+    self:DoRoll()
 end
 
-function m:OnChangeWeapon()
-    self.Super:SwitchWeapon()
+function m:SwitchWeapon()
+    self:AttachNextWeapon()
 end
 
 function m:DoMeleeAttack()
@@ -83,6 +89,64 @@ function m:DoMeleeAttack()
     else
         return self.Super:ActivateAbilitiesWithItemSlot(self.Super.CurrentWeaponSlot, true)
     end
+end
+
+function m:DoRoll()
+    if not self:CanUseAnyAbility() then
+        return
+    end
+
+    local MovingVector = KismetMathLibrary:MakeVector(self.Super:GetInputAxisValue('MoveForward'), self.Super:GetInputAxisValue('MoveRight'), 0)
+    if KismetMathLibrary:VSize(MovingVector) > 0 then
+        self.Super:K2_SetActorRotation(self.Super:GetControlRotation(), true)
+    end
+
+    if not self.RollingMontage then
+        self.RollingMontage = LoadObject(self.Super, '/Game/Characters/Animations/AM_Rolling.AM_Rolling')
+    end
+
+    self:PlayHighPriorityMontage(self.RollingMontage, 'None')
+end
+
+function m:AttachNextWeapon()
+    self.Super.CurWeaponIndex = self.Super.CurWeaponIndex + 1
+    if self.Super.CurWeaponIndex >= #self.Super.EquippedWeapons then
+        self.Super.CurWeaponIndex = 0
+    end
+
+    if not self.WeaponPrimaryAssetType then
+        local FPrimaryAssetType = LoadStruct('PrimaryAssetType')
+        self.WeaponPrimaryAssetType = FPrimaryAssetType()
+        self.WeaponPrimaryAssetType.Name = 'Weapon'
+    end
+
+    self.Super.CurrentWeaponSlot.ItemType = self.WeaponPrimaryAssetType
+    self.Super.CurrentWeaponSlot.SlotNumber = self.Super.CurWeaponIndex
+
+    if KismetSystemLibrary:IsValid(self.Super.CurrentWeapon) then
+        self.Super.CurrentWeapon:K2_DetachFromActor(Common.EDetachmentRule.KeepRelative, Common.EDetachmentRule.KeepWorld, Common.EDetachmentRule.KeepWorld)
+        self.Super.CurrentWeapon = nil
+    end
+
+    self.Super.CurrentWeapon = self.Super.EquippedWeapons[self.Super.CurWeaponIndex + 1]
+    if KismetSystemLibrary:IsValid(self.Super.CurrentWeapon) then
+        self.Super.CurrentWeapon:K2_AttachToComponent(self.Super.Mesh, 'hand_rSocket', Common.EAttachmentRule.SnapToTarget, Common.EAttachmentRule.SnapToTarget, Common.EAttachmentRule.KeepWorld, true)
+    end
+
+    local PlayerController = GameplayStatics:GetPlayerController(self.Super, 0)
+    PlayerController:UpdateOnScreenControls()
+end
+
+function m:OnDamaged(DamageAmount, HitInfo, DamageTags, InstigatorCharacter, DamageCauser)
+    if self.Super.IsProtectedByShield or not self:CanUseAnyAbility() then
+        return
+    end
+
+    if not self.HitReactAnim then
+        self.HitReactAnim = LoadObject(self.Super, '/Game/Characters/Animations/AM_React_Hit.AM_React_Hit')
+    end
+
+    self.Super:PlayAnimMontage(self.HitReactAnim, 1, tostring(KismetMathLibrary:RandomInteger(2)))
 end
 
 return m

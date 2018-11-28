@@ -28,6 +28,7 @@ public:
 	virtual void UnPossessed() override;
 	virtual void OnRep_Controller() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	virtual void PostInitProperties() override;
 	virtual void BeginPlay() override;
@@ -174,6 +175,9 @@ protected:
 	 */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnMoveSpeedChanged(float DeltaValue, const struct FGameplayTagContainer& EventTags);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnSetupPlayerInput();
 
 	/** Called when slotted items change, bound to delegate on interface */
 	void OnItemSlotChanged(FRPGItemSlot ItemSlot, URPGItem* Item);

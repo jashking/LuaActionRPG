@@ -243,6 +243,13 @@ void ARPGCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(ARPGCharacterBase, CharacterLevel);
 }
 
+void ARPGCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	OnSetupPlayerInput();
+}
+
 void ARPGCharacterBase::PostInitProperties()
 {
 	Super::PostInitProperties();

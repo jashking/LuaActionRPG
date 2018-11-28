@@ -76,4 +76,13 @@ function m:CanUseAnyAbility()
     return bAlive and not bPaused and not bUsingSkill
 end
 
+function m:PlayHighPriorityMontage(Montage, StartSectionName)
+    if not self.Super or self.Super.Mesh:GetAnimInstance():Montage_IsPlaying(Montage) then
+        return
+    end
+
+    self.Super.HighPriorityMontage = Montage
+    self.Super:PlayAnimMontage(Montage, 1, StartSectionName)
+end
+
 return m

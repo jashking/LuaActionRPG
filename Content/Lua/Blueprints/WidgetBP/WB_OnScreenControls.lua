@@ -53,7 +53,7 @@ function m:OnNormalAttackButtonClicked()
 end
 
 function m:OnRollingButtonClicked()
-    Super.PlayerCharacter:DoRoll()
+    Super.PlayerCharacter:ToLuaObject():DoRoll()
 end
 
 function m:OnPotionButtonClicked()
@@ -101,7 +101,7 @@ function m:SkillCooldown(TimeRemaining)
 end
 
 function m:OnWeaponChangeButtonClicked()
-    Super.PlayerCharacter:SwitchWeapon()
+    Super.PlayerCharacter:ToLuaObject():SwitchWeapon()
 
     if not self.Hammer_Impact then
         self.Hammer_Impact = LoadObject(Super, '/Game/Assets/Sounds/Weapons/Hammer/A_Hammer_Impact_Cue.A_Hammer_Impact_Cue')

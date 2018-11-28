@@ -35,6 +35,17 @@ m.ECollisionEnabled = {
     QueryAndPhysics = 3,
 }
 
+m.EDetachmentRule = {
+    KeepRelative = 0,
+    KeepWorld = 1,
+}
+
+m.EAttachmentRule = {
+    KeepRelative = 0,
+    KeepWorld = 1,
+    SnapToTarget = 2,
+}
+
 function m:IsRunningOnMobile()
     local LoadClass = LoadClass
     local GameplayStatics = LoadClass('GameplayStatics')
