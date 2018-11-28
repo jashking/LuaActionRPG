@@ -3,9 +3,9 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class ActionRPGTarget : TargetRules
+public class LuaActionRPGTarget : TargetRules
 {
-	public ActionRPGTarget(TargetInfo Target)
+	public LuaActionRPGTarget(TargetInfo Target)
 		: base(Target)
 	{
 		Type = TargetType.Game;

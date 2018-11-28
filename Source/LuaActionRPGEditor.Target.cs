@@ -3,9 +3,9 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class ActionRPGEditorTarget : TargetRules
+public class LuaActionRPGEditorTarget : TargetRules
 {
-	public ActionRPGEditorTarget(TargetInfo Target)
+	public LuaActionRPGEditorTarget(TargetInfo Target)
 		: base(Target)
 	{
 		Type = TargetType.Editor;

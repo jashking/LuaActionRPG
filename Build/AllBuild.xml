@@ -1,0 +1,100 @@
+<?xml version='1.0' ?>
+<BuildGraph xmlns="http://www.epicgames.com/BuildGraph" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.epicgames.com/BuildGraph ../../Engine/Build/Graph/Schema.xsd">
+    
+    <!-- Option Begins -->
+    <Option Name="BuildEditor" DefaultValue="true" Description="Build editor or not. Default is build."/>
+    <Option Name="BuildTools" DefaultValue="false" Description="Build tools or not. Default is not build."/>
+    <Option Name="BuildConfiguration" DefaultValue="Development" Description="Debug, Development or Shipping."/>
+    <Option Name="WithClean" DefaultValue="false" Description="Clean before build."/>
+    <Option Name="WithDebugInfo" DefaultValue="false" Description="Enable debug info in Development and Shipping."/>
+    <Option Name="WithCook" DefaultValue="true" Description="Cook asset."/>
+    <Option Name="IgnoreCookErrors" DefaultValue="false" Description=""/>
+    <Option Name="IterativeCooking" DefaultValue="false" Description=""/>
+	<Option Name="ProjectDir" DefaultValue="" Description=""/>
+	<Option Name="ProjectName" DefaultValue="" Description=""/>
+	<!-- TODO Option
+		-Distribution
+		-NoDebugInfo
+		-EncryptEverything
+		-useCustomCook
+	-->
+    <!-- Option Ends -->
+
+    <!-- Command Begins -->
+    <Property Name="CleanCommand" Value="" />
+    <Property Name="CleanCommand" Value="-Clean" If="$(WithClean)"/>
+
+    <Property Name="BuildCommand" Value="-NoCompileEditor -SkipBuildEditor"/>
+    <Property Name="BuildCommand" Value="$(BuildCommand) -ForceDebugInfo" If="$(WithDebugInfo)"/>
+    
+    <Property Name="PakCommand" Value="-Pak"/>
+
+    <Property Name="CookCommand" Value="-Cook -SkipCookingEditorContent -UnversionedCookedContent -CookPartialgc -Compressed"/>
+    <Property Name="CookCommand" Value="$(CookCommand) -IgnoreCookErrors" If="$(IgnoreCookErrors)"/>
+    <Property Name="CookCommand" Value="$(CookCommand) -IterativeCooking" If="$(IterativeCooking)"/>
+    <Property Name="CookCommand" Value="-SkipCook" If="'$(WithCook)' == false"/>
+
+    <Property Name="StageCommand" Value="-Stage"/>
+
+    <Property Name="PackageCommand" Value="-Package"/>
+
+    <Property Name="ArchiveCommand" Value="-Archive -ArchiveDirectory=$(ProjectDir)\Binaries"/>
+	
+    <Property Name="AllCommand" Value="-project=$(ProjectDir)\$(ProjectName).uproject -ClientConfig=$(BuildConfiguration) -UTF8Output -NoP4 -Prereqs $(CleanCommand) $(BuildCommand) $(PakCommand) $(CookCommand) $(StageCommand) $(PackageCommand) $(ArchiveCommand)"/>
+    <!-- Command Ends -->
+
+    <Agent Name="Tools Win64" Type="BuildWin64">
+        <Node Name="Build Tools Win64" If="$(BuildTools)">
+            <Compile Target="ShaderCompileWorker" Configuration="Development" Platform="Win64" Tag="#Build Tools Win64"/>
+            <Compile Target="UnrealPak" Configuration="Development" Platform="Win64" Tag="#Build Tools Win64"/>
+			<!--
+            <Compile Target="UnrealFrontend" Configuration="Development" Platform="Win64" Tag="#Build Tools Win64"/>
+			<Compile Target="UnrealLightmass" Configuration="Development" Platform="Win64" Tag="#Build Tools Win64"/>
+			<Compile Target="BuildPatchTool" Configuration="Development" Platform="Win64" Tag="#Build Tools Win64"/>
+            <Compile Target="UnrealFileServer" Configuration="Development" Platform="Win64" Tag="#Build Tools Win64"/>
+            -->
+        </Node>
+    </Agent>
+
+    <Agent Name="Editor Win64" Type="BuildWin64">
+		<Node Name="Build UnrealHeaderTool Win64">
+			<Compile Target="UnrealHeaderTool" Platform="Win64" Configuration="Development"/>
+        </Node>
+		<Node Name="Build Editor Win64" Requires="Build UnrealHeaderTool Win64" If="$(BuildEditor)">
+			<Compile Target="$(ProjectName)Editor" Platform="Win64" Configuration="Development" Arguments="$(ProjectDir)\$(ProjectName).uproject" Tag="#Build Editor Win64"/>
+		</Node>
+	</Agent>
+
+    <Agent Name="EXE Win64" Type="BuildWin64">
+        <Node Name="Build EXE Win64" Requires="Build Editor Win64">
+            <Property Name="Win64Command" Value="-TargetPlatform=Win64 $(AllCommand) -Build"/>
+            <Log Message="BuildCookRun with arguments: $(Win64Command)"/>
+            <Command Name="BuildCookRun" Arguments="$(Win64Command)"/>
+        </Node>
+    </Agent>
+
+    <Agent Name="APK Android" Type="BuildWin64">
+        <Node Name="Build APK Android" Requires="Build Editor Win64">
+            <Property Name="AndroidCommand" Value="-TargetPlatform=Android -CookFlavor=ETC2 $(AllCommand) -Build"/>
+            <Log Message="BuildCookRun with arguments: $(AndroidCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(AndroidCommand)"/>
+        </Node>
+    </Agent>
+    
+	<Agent Name="IPA iOS" Type="BuildWin64">
+		<Node Name="Compile IOS Tools">
+			<CsCompile Project="Engine\Source\Programs\IOS\MobileDeviceInterface\MobileDeviceInterface.csproj" Configuration="Development" Platform="AnyCPU" Arguments="/target:Rebuild" Tag="#Build IOS Tools Win64"/>
+			<CsCompile Project="Engine\Source\Programs\IOS\iPhonePackager\iPhonePackager.csproj" Configuration="Development" Platform="AnyCPU" Arguments="/target:Rebuild" Tag="#Build IOS Tools Win64"/>
+			<CsCompile Project="Engine\Source\Programs\IOS\DeploymentServer\DeploymentServer.csproj" Configuration="Development" Platform="AnyCPU" Arguments="/target:Rebuild" Tag="#Build IOS Tools Win64"/>
+		</Node>
+		<Node Name="Compile IOS" Requires="Compile IOS Tools">
+			<Compile Target="$(ProjectName)" Platform="IOS" Configuration="$(BuildConfiguration)" Arguments="-project=$(ProjectDir)\$(ProjectName).uproject $(CleanCommand) $(BuildCommand)"/>
+		</Node>
+        <Node Name="Build IPA iOS" Requires="Build Editor Win64;Compile IOS">
+            <Property Name="iOSCommand" Value="-TargetPlatform=IOS $(AllCommand)"/>
+            <Log Message="BuildCookRun with arguments: $(iOSCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(iOSCommand)"/>
+        </Node>
+    </Agent>
+	
+</BuildGraph>
