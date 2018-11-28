@@ -46,6 +46,14 @@ m.EAttachmentRule = {
     SnapToTarget = 2,
 }
 
+m.ESpawnActorCollisionHandlingMethod = {
+    Default = 0,
+    AlwaysSpawn = 1,
+    AdjustIfPossibleButAlwaysSpawn = 2,
+    AdjustIfPossibleButDontSpawnIfColliding = 3,
+    DontSpawnIfColliding = 4,
+}
+
 function m:IsRunningOnMobile()
     local LoadClass = LoadClass
     local GameplayStatics = LoadClass('GameplayStatics')

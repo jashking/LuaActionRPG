@@ -82,7 +82,7 @@ function m:ReceivePossess(NewPawn)
 
     local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
         function()
-            Super.PlayerCharacter:CreateAllWeapons()
+            Super.PlayerCharacter:ToLuaObject():CreateAllWeapons()
         end))
 
     KismetSystemLibrary:Delay(Super, 0.025, LatentActionInfo)
@@ -157,7 +157,7 @@ function m:ShowInventoryUI()
     if Super.InventoryUI then
         Super.InventoryUI:RemoveFromParent()
         GameplayStatics:SetGamePaused(Super, false)
-        Super.PlayerCharacter:ActivateInventoryCamera(false)
+        Super.PlayerCharacter:ToLuaObject():ActivateInventoryCamera(false)
         Super.InventoryUI = nil
         Super.OnScreenControls:SetVisibility(Common.ESlateVisibility.SelfHitTestInvisible)
     else
@@ -166,7 +166,7 @@ function m:ShowInventoryUI()
         Super.InventoryUI:AddToViewport(0)
 
         GameplayStatics:SetGamePaused(Super, true)
-        Super.PlayerCharacter:ActivateInventoryCamera(true)
+        Super.PlayerCharacter:ToLuaObject():ActivateInventoryCamera(true)
         Super.OnScreenControls:SetVisibility(Common.ESlateVisibility.Hidden)
     end
 end
@@ -175,7 +175,7 @@ function m:UIEquippeditem(ItemSlot, Item)
     Super.OnScreenControls:ToLuaObject():UpdateCurrentIcons_lua()
     
     if ItemSlot.ItemType.Name == 'Weapon' then
-        Super.PlayerCharacter:CreateAllWeapons()
+        Super.PlayerCharacter:ToLuaObject():CreateAllWeapons()
     end
 end
 

@@ -149,4 +149,39 @@ function m:OnDamaged(DamageAmount, HitInfo, DamageTags, InstigatorCharacter, Dam
     self.Super:PlayAnimMontage(self.HitReactAnim, 1, tostring(KismetMathLibrary:RandomInteger(2)))
 end
 
+function m:CreateAllWeapons()
+    local EquippedWeapons = self.Super.EquippedWeapons
+    for _, Weapon in ipairs(EquippedWeapons) do
+        Weapon:K2_DestroyActor()
+    end
+
+    EquippedWeapons = {}
+
+    local Transform = KismetMathLibrary:MakeTransform(
+        KismetMathLibrary:MakeVector(0, 0, 0), KismetMathLibrary:MakeRotator(0, 0, 0), KismetMathLibrary:MakeVector(1, 1, 1))
+
+    local PlayerController = GameplayStatics:GetPlayerController(self.Super, 0)
+
+    for RPGItemSlot, RPGItem in pairs(PlayerController.SlottedItems) do
+        if KismetSystemLibrary:IsValidClass(RPGItem.WeaponActor) then
+            local WeaponActor = GameplayStatics:BeginDeferredActorSpawnFromClass(
+                self.Super, RPGItem.WeaponActor, Transform, Common.ESpawnActorCollisionHandlingMethod.Default, self.Super)
+            WeaponActor.EnableAttackDelay = true
+            GameplayStatics:FinishSpawningActor(WeaponActor, Transform)
+    
+            EquippedWeapons[RPGItemSlot.SlotNumber + 1] = WeaponActor
+        end
+    end
+
+    self.Super.EquippedWeapons = EquippedWeapons
+    self:AttachNextWeapon()
+end
+
+function m:ActivateInventoryCamera(bEnable)
+    self.Super.bInventoryCamera = bEnable
+    self.Super.InventoryCamera:SetActive(bEnable, false)
+    self.Super.ThirdPersonCamera:SetActive(not bEnable, false)
+    self.Super.Mesh:SetTickableWhenPaused(bEnable)
+end
+
 return m
