@@ -1,6 +1,5 @@
 # Action RPG Lua Version #
 
-## TODO ##
+Lua version for Epic's ActionRPG demo game.
 
-* Read Custom defined data table from data asset in BP_GameMode
-* HandleInventoryItemChanged in BP_PlayerController
+Please recusively checkout submodules Bluelua and Liblua.
