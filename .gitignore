@@ -42,3 +42,5 @@ Intermediate/
 /DerivedDataCache
 /Saved
 *.xcworkspace/
+Build/**/FileOpenOrder/
+Build/Android/src/
