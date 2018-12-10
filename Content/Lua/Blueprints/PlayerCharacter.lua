@@ -184,4 +184,9 @@ function m:ActivateInventoryCamera(bEnable)
     self.Super.Mesh:SetTickableWhenPaused(bEnable)
 end
 
+function m:UseEquippedPotion()
+    local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
+    self.Super:ActivateAbilitiesWithItemSlot(RPGBlueprintLibrary:MakeRPGItemSlot('Potion', 0), true)
+end
+
 return m

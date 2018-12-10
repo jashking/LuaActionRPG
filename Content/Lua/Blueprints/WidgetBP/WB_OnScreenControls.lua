@@ -57,7 +57,7 @@ function m:OnRollingButtonClicked()
 end
 
 function m:OnPotionButtonClicked()
-    Super.PlayerCharacter:UseEquippedPotion()
+    Super.PlayerCharacter:ToLuaObject():UseEquippedPotion()
 end
 
 function m:OnInventoryButtonClicked()
