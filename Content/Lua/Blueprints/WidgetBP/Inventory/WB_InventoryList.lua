@@ -54,7 +54,7 @@ function m:AddInventoryItemsToList()
 end
 
 function m:AddStoreItemsToList()
-    local GameInstance = GameplayStatics:GetGameInstance(Super):ToLuaObject()
+    local GameInstance = GameplayStatics:GetGameInstance(Super):CastToLua()
     if not GameInstance then
         return
     end

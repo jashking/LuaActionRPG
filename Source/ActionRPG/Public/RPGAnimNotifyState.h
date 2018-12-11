@@ -15,14 +15,14 @@ class ACTIONRPG_API URPGAnimNotifyState : public UAnimNotifyState, public ILuaIm
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
-	virtual void PostInitProperties() override;
 	virtual void BeginDestroy() override;
 
-protected:
-	virtual bool OnInit(const FString& InLuaFilePath, TSharedPtr<FLuaState> InLuaState = nullptr) override;
-	virtual void OnRelease() override;
+	virtual bool OnInitLuaBinding() override;
+	virtual void OnReleaseLuaBinding() override;
+	virtual FString OnInitBindingLuaPath_Implementation() override;
+	virtual bool ShouldEnableLuaBinding_Implementation() override;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "LuaImplementable", meta = (AllowPrivateAccess = "true"))

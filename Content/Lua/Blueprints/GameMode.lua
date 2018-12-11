@@ -22,7 +22,7 @@ function m:PlayDefaultIntroCutscene()
     OutActors = GameplayStatics:GetAllActorsOfClass(Super, LoadClass('LevelSequenceActor'), {})
     if OutActors[1] then
         local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
-        PlayerController:ToLuaObject():PlaySkippableCutscene(OutActors[1].SequencePlayer)
+        PlayerController:CastToLua():PlaySkippableCutscene(OutActors[1].SequencePlayer)
     else
         self:StartGame()
     end

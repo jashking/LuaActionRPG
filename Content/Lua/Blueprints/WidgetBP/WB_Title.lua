@@ -43,7 +43,7 @@ function m:OnStartGameButtonClicked()
 
     GameplayStatics:PlaySound2D(Super, self.UI_Select, 1, 1, 0, nil, nil)
 
-    local GameInstance = GameplayStatics:GetGameInstance(Super):ToLuaObject()
+    local GameInstance = GameplayStatics:GetGameInstance(Super):CastToLua()
     if GameInstance then
         GameInstance:LoadGameLevel()
     end

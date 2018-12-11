@@ -76,7 +76,10 @@ public:
 	virtual void Shutdown() override;
 	virtual void BeginDestroy() override;
 	virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
-	virtual void PostInitProperties() override;
+
+protected:
+	virtual FString OnInitBindingLuaPath_Implementation() override;
+	virtual bool ShouldEnableLuaBinding_Implementation() override;
 
 protected:
 	/** The current save game object */

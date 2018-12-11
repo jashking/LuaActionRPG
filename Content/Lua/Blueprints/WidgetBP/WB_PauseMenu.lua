@@ -27,7 +27,7 @@ function m:OnCloseButtonClicked()
 
     local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
         function()
-            local GameMode = GameplayStatics:GetGameMode(Super):ToLuaObject()
+            local GameMode = GameplayStatics:GetGameMode(Super):CastToLua()
             GameMode:PauseGame()
             
             Super:RemoveFromParent()

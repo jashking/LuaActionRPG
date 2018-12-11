@@ -25,7 +25,7 @@ function m:OnBackButtonClicked()
 
     local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
         function()
-            local PlayerController = GameplayStatics:GetPlayerController(Super, 0):ToLuaObject()
+            local PlayerController = GameplayStatics:GetPlayerController(Super, 0):CastToLua()
             if PlayerController then
                 PlayerController:ShowInventoryUI()
             end

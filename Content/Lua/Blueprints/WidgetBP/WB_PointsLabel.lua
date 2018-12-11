@@ -12,7 +12,7 @@ local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local Common = require 'Lua.Blueprints.Common'
 
 function m:Construct()
-    local PlayerController = GameplayStatics:GetPlayerController(Super, 0):ToLuaObject()
+    local PlayerController = GameplayStatics:GetPlayerController(Super, 0):CastToLua()
     PlayerController.OnSoulsUpdated = self.UpdateSoulsLabel
     self:UpdateSoulsLabel()
 
@@ -21,7 +21,7 @@ end
 
 function m:Destruct()
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
-    PlayerController = PlayerController and PlayerController:ToLuaObject() or nil
+    PlayerController = PlayerController and PlayerController:CastToLua() or nil
     if PlayerController then
         PlayerController.OnSoulsUpdated = nil
     end

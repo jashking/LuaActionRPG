@@ -40,7 +40,7 @@ function m:StopPlayingSkippableCutscene()
     self:ShowHUD(true)
 
     local GameMode = GameplayStatics:GetGameMode(Super)
-    GameMode:ToLuaObject():StartGame()
+    GameMode:CastToLua():StartGame()
 
     self.SkipIntroWidget:RemoveFromParent()
     self.SkipIntroWidget = nil
@@ -66,7 +66,7 @@ function m:CreateHUD()
     local WBOnScreenControlsClass = LoadClass('/Game/Blueprints/WidgetBP/WB_OnScreenControls.WB_OnScreenControls_C')
     Super.OnScreenControls = WidgetBlueprintLibrary:Create(Super, WBOnScreenControlsClass, Super)
     Super.OnScreenControls:AddToViewport(0)
-    Super.OnScreenControls:ToLuaObject():UpdateCurrentIcons_lua()
+    Super.OnScreenControls:CastToLua():UpdateCurrentIcons_lua()
 end
 
 function m:ReceivePossess(NewPawn)
@@ -82,7 +82,7 @@ function m:ReceivePossess(NewPawn)
 
     local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
         function()
-            Super.PlayerCharacter:ToLuaObject():CreateAllWeapons()
+            Super.PlayerCharacter:CastToLua():CreateAllWeapons()
         end))
 
     KismetSystemLibrary:Delay(Super, 0.025, LatentActionInfo)
@@ -157,7 +157,7 @@ function m:ShowInventoryUI()
     if Super.InventoryUI then
         Super.InventoryUI:RemoveFromParent()
         GameplayStatics:SetGamePaused(Super, false)
-        Super.PlayerCharacter:ToLuaObject():ActivateInventoryCamera(false)
+        Super.PlayerCharacter:CastToLua():ActivateInventoryCamera(false)
         Super.InventoryUI = nil
         Super.OnScreenControls:SetVisibility(Common.ESlateVisibility.SelfHitTestInvisible)
     else
@@ -166,16 +166,16 @@ function m:ShowInventoryUI()
         Super.InventoryUI:AddToViewport(0)
 
         GameplayStatics:SetGamePaused(Super, true)
-        Super.PlayerCharacter:ToLuaObject():ActivateInventoryCamera(true)
+        Super.PlayerCharacter:CastToLua():ActivateInventoryCamera(true)
         Super.OnScreenControls:SetVisibility(Common.ESlateVisibility.Hidden)
     end
 end
 
 function m:UIEquippeditem(ItemSlot, Item)
-    Super.OnScreenControls:ToLuaObject():UpdateCurrentIcons_lua()
+    Super.OnScreenControls:CastToLua():UpdateCurrentIcons_lua()
     
     if ItemSlot.ItemType.Name == 'Weapon' then
-        Super.PlayerCharacter:ToLuaObject():CreateAllWeapons()
+        Super.PlayerCharacter:CastToLua():CreateAllWeapons()
     end
 end
 

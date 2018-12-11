@@ -22,8 +22,8 @@ end
 
 function m:OnInventoryButtonClicked()
     local OwningList = Super.OwningList
-    OwningList.EquipmentButton:ToLuaObject():UpdateEquipmentSlot(Super.ItemClass)
-    OwningList:ToLuaObject():CloseList()
+    OwningList.EquipmentButton:CastToLua():UpdateEquipmentSlot(Super.ItemClass)
+    OwningList:CastToLua():CloseList()
 
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
     PlayerController:SaveInventory()

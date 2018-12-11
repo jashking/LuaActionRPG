@@ -49,31 +49,31 @@ function m:SetSafemargins()
 end
 
 function m:OnNormalAttackButtonClicked()
-    Super.PlayerCharacter:ToLuaObject():DoMeleeAttack()
+    Super.PlayerCharacter:CastToLua():DoMeleeAttack()
 end
 
 function m:OnRollingButtonClicked()
-    Super.PlayerCharacter:ToLuaObject():DoRoll()
+    Super.PlayerCharacter:CastToLua():DoRoll()
 end
 
 function m:OnPotionButtonClicked()
-    Super.PlayerCharacter:ToLuaObject():UseEquippedPotion()
+    Super.PlayerCharacter:CastToLua():UseEquippedPotion()
 end
 
 function m:OnInventoryButtonClicked()
-    local PlayerController = GameplayStatics:GetPlayerController(Super, 0):ToLuaObject()
+    local PlayerController = GameplayStatics:GetPlayerController(Super, 0):CastToLua()
     PlayerController:ShowInventoryUI()
 end
 
 function m:OnPauseButtonClicked()
-    local GameMode = GameplayStatics:GetGameMode(Super):ToLuaObject()
+    local GameMode = GameplayStatics:GetGameMode(Super):CastToLua()
     if GameMode then
         GameMode:PauseGame()
     end
 end
 
 function m:OnUseSkillButtonClicked()
-    Super.PlayerCharacter:ToLuaObject():DoSkillAttack()
+    Super.PlayerCharacter:CastToLua():DoSkillAttack()
 
     if not self.CooldownSkillTag then
         local FGameplayTagContainer = LoadStruct('GameplayTagContainer')
@@ -101,7 +101,7 @@ function m:SkillCooldown(TimeRemaining)
 end
 
 function m:OnWeaponChangeButtonClicked()
-    Super.PlayerCharacter:ToLuaObject():SwitchWeapon()
+    Super.PlayerCharacter:CastToLua():SwitchWeapon()
 
     if not self.Hammer_Impact then
         self.Hammer_Impact = LoadObject(Super, '/Game/Assets/Sounds/Weapons/Hammer/A_Hammer_Impact_Cue.A_Hammer_Impact_Cue')

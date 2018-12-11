@@ -35,7 +35,7 @@ function m:SetupUI()
     --Super.Vibration_Checkbox:SetIsChecked(Super.CurrentOptions.bVibration)
     --Super.Shake_Checkbox:SetIsChecked(Super.CurrentOptions.bCameraShake)
 
-    local PlayerController = GameplayStatics:GetPlayerController(Super, 0):ToLuaObject()
+    local PlayerController = GameplayStatics:GetPlayerController(Super, 0):CastToLua()
     Super.ClearSaveButton:SetIsEnabled((PlayerController == nil) and true or false)
 end
 

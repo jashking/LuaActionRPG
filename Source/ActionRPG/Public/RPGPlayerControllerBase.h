@@ -17,7 +17,6 @@ class ACTIONRPG_API ARPGPlayerControllerBase : public APlayerController, public 
 public:
 	// Constructor and overrides
 	ARPGPlayerControllerBase() {}
-	virtual void PostInitProperties() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void BeginDestroy() override;
@@ -132,6 +131,9 @@ protected:
 	void NotifyInventoryItemChanged(bool bAdded, URPGItem* Item);
 	void NotifySlottedItemChanged(FRPGItemSlot ItemSlot, URPGItem* Item);
 	void NotifyInventoryLoaded();
+
+	virtual FString OnInitBindingLuaPath_Implementation() override;
+	virtual bool ShouldEnableLuaBinding_Implementation() override;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "LuaImplementable", meta = (AllowPrivateAccess = "true"))

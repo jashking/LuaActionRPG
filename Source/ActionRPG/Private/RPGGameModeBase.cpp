@@ -4,6 +4,7 @@
 #include "RPGGameModeBase.h"
 #include "RPGGameStateBase.h"
 #include "RPGPlayerControllerBase.h"
+#include "Misc/Paths.h"
 
 ARPGGameModeBase::ARPGGameModeBase()
 {
@@ -11,16 +12,9 @@ ARPGGameModeBase::ARPGGameModeBase()
 	PlayerControllerClass = ARPGPlayerControllerBase::StaticClass();
 }
 
-void ARPGGameModeBase::PostInitProperties()
-{
-	Super::PostInitProperties();
-
-	PreRegisterLua(LuaFilePath);
-}
-
 void ARPGGameModeBase::BeginPlay()
 {
-	OnInit(LuaFilePath);
+	OnInitLuaBinding();
 
 	Super::BeginPlay();
 }
@@ -29,20 +23,30 @@ void ARPGGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	OnRelease();
+	OnReleaseLuaBinding();
 }
 
 void ARPGGameModeBase::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	OnRelease();
+	OnReleaseLuaBinding();
 }
 
 void ARPGGameModeBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
-	if (!OnProcessEvent(Function, Parameters))
+	if (!OnProcessLuaOverrideEvent(Function, Parameters))
 	{
 		Super::ProcessEvent(Function, Parameters);
 	}
+}
+
+FString ARPGGameModeBase::OnInitBindingLuaPath_Implementation()
+{
+	return FPaths::ProjectContentDir() / LuaFilePath;
+}
+
+bool ARPGGameModeBase::ShouldEnableLuaBinding_Implementation()
+{
+	return !LuaFilePath.IsEmpty();
 }

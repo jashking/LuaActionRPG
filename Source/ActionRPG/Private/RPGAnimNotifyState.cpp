@@ -3,42 +3,47 @@
 #include "ActionRPG.h"
 #include "RPGAnimNotifyState.h"
 
+#include "Misc/Paths.h"
+
 void URPGAnimNotifyState::ProcessEvent(UFunction* Function, void* Parameters)
 {
 	if (!bHasInit && !LuaFilePath.IsEmpty())
 	{
-		OnInit(LuaFilePath);
+		OnInitLuaBinding();
 	}
 
-	if (!OnProcessEvent(Function, Parameters))
+	if (!OnProcessLuaOverrideEvent(Function, Parameters))
 	{
 		Super::ProcessEvent(Function, Parameters);
 	}
-}
-
-void URPGAnimNotifyState::PostInitProperties()
-{
-	Super::PostInitProperties();
-
-	PreRegisterLua(LuaFilePath);
 }
 
 void URPGAnimNotifyState::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	OnRelease();
+	OnReleaseLuaBinding();
 }
 
-bool URPGAnimNotifyState::OnInit(const FString& InLuaFilePath, TSharedPtr<FLuaState> InLuaState /*= nullptr*/)
+bool URPGAnimNotifyState::OnInitLuaBinding()
 {
-	bHasInit = ILuaImplementableInterface::OnInit(InLuaFilePath, InLuaState);
+	bHasInit = ILuaImplementableInterface::OnInitLuaBinding();
 
 	return bHasInit;
 }
 
-void URPGAnimNotifyState::OnRelease()
+void URPGAnimNotifyState::OnReleaseLuaBinding()
 {
-	ILuaImplementableInterface::OnRelease();
+	ILuaImplementableInterface::OnReleaseLuaBinding();
 	bHasInit = false;
+}
+
+FString URPGAnimNotifyState::OnInitBindingLuaPath_Implementation()
+{
+	return FPaths::ProjectContentDir() / LuaFilePath;
+}
+
+bool URPGAnimNotifyState::ShouldEnableLuaBinding_Implementation()
+{
+	return !LuaFilePath.IsEmpty();
 }

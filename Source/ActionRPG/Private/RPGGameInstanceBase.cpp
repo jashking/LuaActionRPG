@@ -6,6 +6,7 @@
 #include "RPGSaveGame.h"
 #include "Items/RPGItem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Misc/Paths.h"
 
 URPGGameInstanceBase::URPGGameInstanceBase()
 	: SaveSlot(TEXT("SaveGame"))
@@ -101,7 +102,7 @@ void URPGGameInstanceBase::ResetSaveGame()
 
 void URPGGameInstanceBase::Init()
 {
-	OnInit(LuaFilePath);
+	OnInitLuaBinding();
 
 	Super::Init();
 }
@@ -110,27 +111,30 @@ void URPGGameInstanceBase::Shutdown()
 {
 	Super::Shutdown();
 
-	OnRelease();
+	OnReleaseLuaBinding();
 }
 
 void URPGGameInstanceBase::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	OnRelease();
+	OnReleaseLuaBinding();
 }
 
 void URPGGameInstanceBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
-	if (!OnProcessEvent(Function, Parameters))
+	if (!OnProcessLuaOverrideEvent(Function, Parameters))
 	{
 		Super::ProcessEvent(Function, Parameters);
 	}
 }
 
-void URPGGameInstanceBase::PostInitProperties()
+FString URPGGameInstanceBase::OnInitBindingLuaPath_Implementation()
 {
-	Super::PostInitProperties();
+	return FPaths::ProjectContentDir() / LuaFilePath;
+}
 
-	PreRegisterLua(LuaFilePath);
+bool URPGGameInstanceBase::ShouldEnableLuaBinding_Implementation()
+{
+	return !LuaFilePath.IsEmpty();
 }

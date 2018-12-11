@@ -32,7 +32,7 @@ function m:OnInventoryButtonClicked()
     WBPurchaseConfirmClass.ItemType = OriginalItemType
     WBPurchaseConfirm:AddToViewport(0)
 
-    WBPurchaseConfirm:ToLuaObject().OnClickedConfirm = self.OnClickedConfirm
+    WBPurchaseConfirm:CastToLua().OnClickedConfirm = self.OnClickedConfirm
 end
 
 function m:OnClickedConfirm()
@@ -42,8 +42,8 @@ function m:OnClickedConfirm()
         print('Purchase: Purchase was sucesfull')
 
         local OwningList = Super.OwningList
-        OwningList.EquipmentButton:ToLuaObject():UpdateEquipmentSlot(Super.ItemClass)
-        OwningList:ToLuaObject():CloseList()
+        OwningList.EquipmentButton:CastToLua():UpdateEquipmentSlot(Super.ItemClass)
+        OwningList:CastToLua():CloseList()
     else
         print("Can't touch this...")
     end

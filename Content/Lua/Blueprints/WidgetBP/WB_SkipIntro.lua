@@ -10,7 +10,7 @@ function m:Construct()
     Super.SkipButton.OnClicked:Add(
         function ()
             local GameplayStatics = LoadClass('GameplayStatics')
-            local PlayerController = GameplayStatics:GetPlayerController(Super, 0):ToLuaObject()
+            local PlayerController = GameplayStatics:GetPlayerController(Super, 0):CastToLua()
             
             PlayerController:StopPlayingSkippableCutscene()
             Super:RemoveFromParent()

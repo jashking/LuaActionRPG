@@ -24,7 +24,7 @@ function m:Received_NotifyBegin(MeshComp, Animation, TotalDuration)
         return false
     end
 
-    CurrentWeapon:ToLuaObject():BeginWeaponAttack(Super.EventTag, Super.AttackDelayTime, Super.MaxAttackDelayCount)
+    CurrentWeapon:CastToLua():BeginWeaponAttack(Super.EventTag, Super.AttackDelayTime, Super.MaxAttackDelayCount)
     return true
 end
 
@@ -43,7 +43,7 @@ function m:Received_NotifyEnd(MeshComp, Animation)
         return false
     end
 
-    CurrentWeapon:ToLuaObject():EndWeaponAttack()
+    CurrentWeapon:CastToLua():EndWeaponAttack()
     return true
 end
 

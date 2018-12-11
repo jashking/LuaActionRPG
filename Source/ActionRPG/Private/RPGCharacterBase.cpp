@@ -5,6 +5,7 @@
 #include "Items/RPGItem.h"
 #include "AbilitySystemGlobals.h"
 #include "Abilities/RPGGameplayAbility.h"
+#include "Misc/Paths.h"
 
 ARPGCharacterBase::ARPGCharacterBase()
 {
@@ -250,16 +251,9 @@ void ARPGCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	OnSetupPlayerInput();
 }
 
-void ARPGCharacterBase::PostInitProperties()
-{
-	Super::PostInitProperties();
-
-	PreRegisterLua(LuaFilePath);
-}
-
 void ARPGCharacterBase::BeginPlay()
 {
-	OnInit(LuaFilePath);
+	OnInitLuaBinding();
 
 	Super::BeginPlay();
 }
@@ -268,19 +262,19 @@ void ARPGCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	OnRelease();
+	OnReleaseLuaBinding();
 }
 
 void ARPGCharacterBase::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	OnRelease();
+	OnReleaseLuaBinding();
 }
 
 void ARPGCharacterBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
-	if (!OnProcessEvent(Function, Parameters))
+	if (!OnProcessLuaOverrideEvent(Function, Parameters))
 	{
 		Super::ProcessEvent(Function, Parameters);
 	}
@@ -443,4 +437,14 @@ void ARPGCharacterBase::HandleMoveSpeedChanged(float DeltaValue, const struct FG
 	{
 		OnMoveSpeedChanged(DeltaValue, EventTags);
 	}
+}
+
+FString ARPGCharacterBase::OnInitBindingLuaPath_Implementation()
+{
+	return FPaths::ProjectContentDir() / LuaFilePath;
+}
+
+bool ARPGCharacterBase::ShouldEnableLuaBinding_Implementation()
+{
+	return !LuaFilePath.IsEmpty();
 }

@@ -47,7 +47,7 @@ function m:OnHealthChanged(DeltaValue, EventTags)
     self:UpdateHealthBar()
 
     if not self:IsAlive() then
-        local GameMode = GameplayStatics:GetGameMode(self.Super):ToLuaObject()
+        local GameMode = GameplayStatics:GetGameMode(self.Super):CastToLua()
         GameMode:GameOver()
 
         self:DebugFinish()

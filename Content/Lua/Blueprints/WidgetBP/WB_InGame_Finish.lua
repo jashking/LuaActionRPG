@@ -49,7 +49,7 @@ function m:PlayAllAnimations()
 end
 
 function m:OnRestartButtionClicked()
-    local GameInstance = GameplayStatics:GetGameInstance(Super):ToLuaObject()
+    local GameInstance = GameplayStatics:GetGameInstance(Super):CastToLua()
     if GameInstance then
         GameInstance:RestartGameLevel()
     end
@@ -59,7 +59,7 @@ function m:OnRestartButtionClicked()
 end
 
 function m:OnMainMenuButtonClicked()
-    local GameMode = GameplayStatics:GetGameMode(Super):ToLuaObject()
+    local GameMode = GameplayStatics:GetGameMode(Super):CastToLua()
     if GameMode then
         GameMode:GoHome()
     end

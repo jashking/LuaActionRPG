@@ -6,6 +6,7 @@
 #include "RPGGameInstanceBase.h"
 #include "RPGSaveGame.h"
 #include "Items/RPGItem.h"
+#include "Misc/Paths.h"
 
 bool ARPGPlayerControllerBase::AddInventoryItem(URPGItem* NewItem, int32 ItemCount, int32 ItemLevel, bool bAutoSlot)
 {
@@ -371,16 +372,9 @@ void ARPGPlayerControllerBase::NotifyInventoryLoaded()
 	OnInventoryLoaded.Broadcast();
 }
 
-void ARPGPlayerControllerBase::PostInitProperties()
-{
-	Super::PostInitProperties();
-
-	PreRegisterLua(LuaFilePath);
-}
-
 void ARPGPlayerControllerBase::BeginPlay()
 {
-	OnInit(LuaFilePath);
+	OnInitLuaBinding();
 
 	// Load inventory off save game before starting play
 	LoadInventory();
@@ -392,19 +386,19 @@ void ARPGPlayerControllerBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	OnRelease();
+	OnReleaseLuaBinding();
 }
 
 void ARPGPlayerControllerBase::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	OnRelease();
+	OnReleaseLuaBinding();
 }
 
 void ARPGPlayerControllerBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
-	if (!OnProcessEvent(Function, Parameters))
+	if (!OnProcessLuaOverrideEvent(Function, Parameters))
 	{
 		Super::ProcessEvent(Function, Parameters);
 	}
@@ -433,4 +427,14 @@ void ARPGPlayerControllerBase::UnPossess()
 	}
 	
 	Super::UnPossess();
+}
+
+FString ARPGPlayerControllerBase::OnInitBindingLuaPath_Implementation()
+{
+	return FPaths::ProjectContentDir() / LuaFilePath;
+}
+
+bool ARPGPlayerControllerBase::ShouldEnableLuaBinding_Implementation()
+{
+	return !LuaFilePath.IsEmpty();
 }
