@@ -85,7 +85,8 @@ function m:DoMeleeAttack()
     end
 
     if self:IsUsingMelee() then
-        return self.Super:JumpSectionForCombo()
+        self:JumpSectionForCombo()
+        return
     else
         return self.Super:ActivateAbilitiesWithItemSlot(self.Super.CurrentWeaponSlot, true)
     end
@@ -187,6 +188,27 @@ end
 function m:UseEquippedPotion()
     local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
     self.Super:ActivateAbilitiesWithItemSlot(RPGBlueprintLibrary:MakeRPGItemSlot('Potion', 0), true)
+end
+
+function m:JumpSectionForCombo()
+    if not self.Super.bEnableComboPeriod then
+        return
+    end
+
+    local AnimInstance = self.Super.Mesh:GetAnimInstance()
+    local CurrentActiveMontage = AnimInstance:GetCurrentActiveMontage()
+    local JumpSections = self.Super.JumpSectionNotify.JumpSections
+    local RandomNextIndex = KismetMathLibrary:RandomInteger(#JumpSections)
+
+    AnimInstance:Montage_SetNextSection(AnimInstance:Montage_GetCurrentSection(CurrentActiveMontage), JumpSections[RandomNextIndex + 1], CurrentActiveMontage)
+
+    self.Super.bEnableComboPeriod = false
+end
+
+function m:OnInitBPFunctionOverriding()
+    return {
+        'JumpSectionForCombo'
+    }
 end
 
 return m
