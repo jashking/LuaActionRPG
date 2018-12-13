@@ -39,7 +39,7 @@ end
 function m:OnStartGameButtonClicked()
     if not self.UI_Select or not self.UI_Select:IsValid() then
         self.UI_Select = LoadObject(Super, '/Game/Assets/Sounds/UI/A_UI_Select01.A_UI_Select01')
-    end`
+    end
 
     GameplayStatics:PlaySound2D(Super, self.UI_Select, 1, 1, 0, nil, nil)
 
