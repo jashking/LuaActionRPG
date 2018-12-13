@@ -22,7 +22,7 @@ function m:Construct()
 
     local LatentActionInfo = CreateLatentAction(CreateDelegate(Super, self,
         function()
-            if not self.BossBattle then
+            if not self.BossBattle or not self.BossBattle:IsValid() then
                 self.BossBattle = LoadObject(Super, '/Game/Assets/Sounds/Music/Ice_BossBattle01_Cue.Ice_BossBattle01_Cue')
             end
 
@@ -37,9 +37,9 @@ function m:Construct()
 end
 
 function m:OnStartGameButtonClicked()
-    if not self.UI_Select then
+    if not self.UI_Select or not self.UI_Select:IsValid() then
         self.UI_Select = LoadObject(Super, '/Game/Assets/Sounds/UI/A_UI_Select01.A_UI_Select01')
-    end
+    end`
 
     GameplayStatics:PlaySound2D(Super, self.UI_Select, 1, 1, 0, nil, nil)
 

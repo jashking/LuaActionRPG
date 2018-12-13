@@ -207,4 +207,8 @@ function m:UpdateOnScreenControls()
     Super.OnScreenControls:CastToLua():UpdateCurrentIcons()
 end
 
+function m:AddSouls(Price)
+    Super:AddInventoryItem(Super.SoulsItem, Price, 1, true)
+end
+
 return m

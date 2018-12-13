@@ -102,7 +102,7 @@ function m:DoRoll()
         self.Super:K2_SetActorRotation(self.Super:GetControlRotation(), true)
     end
 
-    if not self.RollingMontage then
+    if not self.RollingMontage or not self.RollingMontage:IsValid() then
         self.RollingMontage = LoadObject(self.Super, '/Game/Characters/Animations/AM_Rolling.AM_Rolling')
     end
 
@@ -143,7 +143,7 @@ function m:OnDamaged(DamageAmount, HitInfo, DamageTags, InstigatorCharacter, Dam
         return
     end
 
-    if not self.HitReactAnim then
+    if not self.HitReactAnim or not self.HitReactAnim:IsValid() then
         self.HitReactAnim = LoadObject(self.Super, '/Game/Characters/Animations/AM_React_Hit.AM_React_Hit')
     end
 

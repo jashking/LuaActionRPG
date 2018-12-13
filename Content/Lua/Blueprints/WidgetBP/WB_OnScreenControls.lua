@@ -103,7 +103,7 @@ end
 function m:OnWeaponChangeButtonClicked()
     Super.PlayerCharacter:CastToLua():SwitchWeapon()
 
-    if not self.Hammer_Impact then
+    if not self.Hammer_Impact or not self.Hammer_Impact:IsValid() then
         self.Hammer_Impact = LoadObject(Super, '/Game/Assets/Sounds/Weapons/Hammer/A_Hammer_Impact_Cue.A_Hammer_Impact_Cue')
     end
 

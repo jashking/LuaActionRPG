@@ -54,6 +54,13 @@ m.ESpawnActorCollisionHandlingMethod = {
     DontSpawnIfColliding = 4,
 }
 
+m.EPSCPoolMethod = {
+    None = 0,
+    AutoRelease = 1,
+    ManualRelease = 2,
+    ManualRelease_OnComplete = 3,
+}
+
 function m:IsRunningOnMobile()
     local LoadClass = LoadClass
     local GameplayStatics = LoadClass('GameplayStatics')

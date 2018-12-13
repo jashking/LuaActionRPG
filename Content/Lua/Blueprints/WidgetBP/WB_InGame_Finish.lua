@@ -33,7 +33,7 @@ function m:PlayAllAnimations()
     end
     self.PlayAllAnimationsOnce = true
 
-    if not self.UI_WaveEnd then
+    if not self.UI_WaveEnd or not not self.UI_WaveEnd:IsValid() then
         self.UI_WaveEnd = LoadObject(Super, '/Game/Assets/Sounds/UI/A_UI_WaveEnd.A_UI_WaveEnd')
     end
 
