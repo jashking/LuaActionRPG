@@ -66,7 +66,7 @@ function m:CreateHUD()
     local WBOnScreenControlsClass = LoadClass('/Game/Blueprints/WidgetBP/WB_OnScreenControls.WB_OnScreenControls_C')
     Super.OnScreenControls = WidgetBlueprintLibrary:Create(Super, WBOnScreenControlsClass, Super)
     Super.OnScreenControls:AddToViewport(0)
-    Super.OnScreenControls:CastToLua():UpdateCurrentIcons_lua()
+    Super.OnScreenControls:CastToLua():UpdateCurrentIcons()
 end
 
 function m:ReceivePossess(NewPawn)
@@ -172,11 +172,39 @@ function m:ShowInventoryUI()
 end
 
 function m:UIEquippeditem(ItemSlot, Item)
-    Super.OnScreenControls:CastToLua():UpdateCurrentIcons_lua()
+    Super.OnScreenControls:CastToLua():UpdateCurrentIcons()
     
     if ItemSlot.ItemType.Name == 'Weapon' then
         Super.PlayerCharacter:CastToLua():CreateAllWeapons()
     end
+end
+
+function m:CanPurchaseItem(Item)
+    return Super:GetInventoryItemCount(Super.SoulsItem) >= Item.Price
+end
+
+function m:PurchaseItem(NewItem)
+    if not self:CanPurchaseItem(NewItem) then
+        return false
+    end
+
+    self:ConsumeSouls(NewItem.Price)
+    local bAddResult = Super:AddInventoryItem(NewItem, 1, 1, false)
+    local bSaveResult = Super:SaveInventory()
+
+    return bAddResult and bSaveResult
+end
+
+function m:ConsumeSouls(Price)
+    return Super:RemoveInventoryItem(Super.SoulsItem, Price)
+end
+
+function m:UpdateOnScreenControls()
+    if not KismetSystemLibrary:IsValid(Super.OnScreenControls) then
+        return false
+    end
+
+    Super.OnScreenControls:CastToLua():UpdateCurrentIcons()
 end
 
 return m

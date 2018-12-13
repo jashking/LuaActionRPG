@@ -37,7 +37,7 @@ end
 
 function m:OnClickedConfirm()
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
-    local bPurchaseResult = PlayerController:PurchaseItem(Super.ItemClass)
+    local bPurchaseResult = PlayerController:CastToLua():PurchaseItem(Super.ItemClass)
     if bPurchaseResult then
         print('Purchase: Purchase was sucesfull')
 

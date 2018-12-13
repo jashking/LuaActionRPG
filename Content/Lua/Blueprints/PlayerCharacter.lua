@@ -135,7 +135,7 @@ function m:AttachNextWeapon()
     end
 
     local PlayerController = GameplayStatics:GetPlayerController(self.Super, 0)
-    PlayerController:UpdateOnScreenControls()
+    PlayerController:CastToLua():UpdateOnScreenControls()
 end
 
 function m:OnDamaged(DamageAmount, HitInfo, DamageTags, InstigatorCharacter, DamageCauser)
@@ -191,7 +191,7 @@ function m:UseEquippedPotion()
 end
 
 function m:JumpSectionForCombo()
-    if not self.Super.bEnableComboPeriod then
+    if not self.Super.bEnableComboPeriod or not self.Super.JumpSectionNotify then
         return
     end
 

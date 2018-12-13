@@ -28,7 +28,7 @@ function m:Construct()
     Super.IconSlot:AddChild(PurchaseItem)
     
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
-    Super.ConfirmButton:SetIsEnabled(PlayerController:CanPurchaseItem(Super.ItemType))
+    Super.ConfirmButton:SetIsEnabled(PlayerController:CastToLua():CanPurchaseItem(Super.ItemType))
 
     Super.CancelButton.OnClicked:Add(self, self.OnCancelButtonClicked)
     Super.ConfirmButton.OnClicked:Add(self, self.OnConfirmButtonClicked)

@@ -108,10 +108,10 @@ function m:OnWeaponChangeButtonClicked()
     end
 
     GameplayStatics:PlaySound2D(Super, self.Hammer_Impact, 1, 1, 0, nil, nil)
-    self:UpdateCurrentIcons_lua()
+    self:UpdateCurrentIcons()
 end
 
-function m:UpdateCurrentIcons_lua()
+function m:UpdateCurrentIcons()
     local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
 
