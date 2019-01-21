@@ -66,7 +66,7 @@
 	</Agent>
 
     <Agent Name="EXE Win64" Type="BuildWin64">
-        <Node Name="Build EXE Win64" Requires="Build Editor Win64">
+        <Node Name="Build EXE Win64">
             <Property Name="Win64Command" Value="-TargetPlatform=Win64 $(AllCommand) -Build"/>
             <Log Message="BuildCookRun with arguments: $(Win64Command)"/>
             <Command Name="BuildCookRun" Arguments="$(Win64Command)"/>
@@ -74,7 +74,7 @@
     </Agent>
 
     <Agent Name="APK Android" Type="BuildWin64">
-        <Node Name="Build APK Android" Requires="Build Editor Win64">
+        <Node Name="Build APK Android">
             <Property Name="AndroidCommand" Value="-TargetPlatform=Android -CookFlavor=ETC2 $(AllCommand) -Build"/>
             <Log Message="BuildCookRun with arguments: $(AndroidCommand)"/>
             <Command Name="BuildCookRun" Arguments="$(AndroidCommand)"/>
@@ -90,7 +90,7 @@
 		<Node Name="Compile IOS" Requires="Compile IOS Tools">
 			<Compile Target="$(ProjectName)" Platform="IOS" Configuration="$(BuildConfiguration)" Arguments="-project=$(ProjectDir)\$(ProjectName).uproject $(CleanCommand) $(BuildCommand)"/>
 		</Node>
-        <Node Name="Build IPA iOS" Requires="Build Editor Win64;Compile IOS">
+        <Node Name="Build IPA iOS" Requires="Compile IOS">
             <Property Name="iOSCommand" Value="-TargetPlatform=IOS $(AllCommand)"/>
             <Log Message="BuildCookRun with arguments: $(iOSCommand)"/>
             <Command Name="BuildCookRun" Arguments="$(iOSCommand)"/>
