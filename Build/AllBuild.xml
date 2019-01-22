@@ -16,7 +16,6 @@
 		-Distribution
 		-NoDebugInfo
 		-EncryptEverything
-		-useCustomCook
 	-->
     <!-- Option Ends -->
 
@@ -24,7 +23,7 @@
     <Property Name="CleanCommand" Value="" />
     <Property Name="CleanCommand" Value="-Clean" If="$(WithClean)"/>
 
-    <Property Name="BuildCommand" Value="-NoCompileEditor -SkipBuildEditor"/>
+    <Property Name="BuildCommand" Value="-Build -NoCompileEditor -SkipBuildEditor"/>
     <Property Name="BuildCommand" Value="$(BuildCommand) -ForceDebugInfo" If="$(WithDebugInfo)"/>
     
     <Property Name="PakCommand" Value="-Pak"/>
@@ -40,10 +39,13 @@
 
     <Property Name="ArchiveCommand" Value="-Archive -ArchiveDirectory=$(ProjectDir)\Binaries"/>
 	
-    <Property Name="AllCommand" Value="-project=$(ProjectDir)\$(ProjectName).uproject -ClientConfig=$(BuildConfiguration) -UTF8Output -NoP4 -Prereqs $(CleanCommand) $(BuildCommand) $(PakCommand) $(CookCommand) $(StageCommand) $(PackageCommand) $(ArchiveCommand)"/>
+	<Property Name="BaseCommand" Value="-project=$(ProjectDir)\$(ProjectName).uproject -UTF8Output -NoP4 -Prereqs $(CleanCommand) $(BuildCommand) $(PakCommand) $(CookCommand) $(StageCommand) $(ArchiveCommand)"/>
+	<Property Name="BaseGameCommand" Value="$(BaseCommand) -ClientConfig=$(BuildConfiguration) $(PackageCommand)"/>
+    <Property Name="BaseServerCommand" Value="$(BaseCommand) -DedicatedServer"/>
+
     <!-- Command Ends -->
 
-    <Agent Name="Tools Win64" Type="BuildWin64">
+    <Agent Name="Tools Win64" Type="BuildOnWindows">
         <Node Name="Build Tools Win64" If="$(BuildTools)">
             <Compile Target="ShaderCompileWorker" Configuration="Development" Platform="Win64" Tag="#Build Tools Win64"/>
             <Compile Target="UnrealPak" Configuration="Development" Platform="Win64" Tag="#Build Tools Win64"/>
@@ -56,7 +58,7 @@
         </Node>
     </Agent>
 
-    <Agent Name="Editor Win64" Type="BuildWin64">
+    <Agent Name="Editor Win64" Type="BuildOnWindows">
 		<Node Name="Build UnrealHeaderTool Win64">
 			<Compile Target="UnrealHeaderTool" Platform="Win64" Configuration="Development"/>
         </Node>
@@ -65,36 +67,84 @@
 		</Node>
 	</Agent>
 
-    <Agent Name="EXE Win64" Type="BuildWin64">
-        <Node Name="Build EXE Win64">
-            <Property Name="Win64Command" Value="-TargetPlatform=Win64 $(AllCommand) -Build"/>
-            <Log Message="BuildCookRun with arguments: $(Win64Command)"/>
-            <Command Name="BuildCookRun" Arguments="$(Win64Command)"/>
+	<!-- Games Begins -->
+	
+    <Agent Name="Game Win64" Type="BuildOnWindows">
+        <Node Name="Build Game Win64">
+            <Property Name="Win64GameCommand" Value="-TargetPlatform=Win64 $(BaseGameCommand)"/>
+            <Log Message="BuildCookRun with arguments: $(Win64GameCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(Win64GameCommand)"/>
         </Node>
     </Agent>
 
-    <Agent Name="APK Android" Type="BuildWin64">
-        <Node Name="Build APK Android">
-            <Property Name="AndroidCommand" Value="-TargetPlatform=Android -CookFlavor=ETC2 $(AllCommand) -Build"/>
-            <Log Message="BuildCookRun with arguments: $(AndroidCommand)"/>
-            <Command Name="BuildCookRun" Arguments="$(AndroidCommand)"/>
+	<Agent Name="Game Linux" Type="BuildOnWindows">
+        <Node Name="Build Game Linux">
+            <Property Name="LinuxGameCommand" Value="-TargetPlatform=Linux $(BaseGameCommand)"/>
+            <Log Message="BuildCookRun with arguments: $(LinuxGameCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(LinuxGameCommand)"/>
+        </Node>
+    </Agent>
+	
+	<Agent Name="Game Mac" Type="BuildOnWindows">
+        <Node Name="Build Game Mac">
+            <Property Name="MacGameCommand" Value="-TargetPlatform=Mac $(BaseGameCommand)"/>
+            <Log Message="BuildCookRun with arguments: $(MacGameCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(MacGameCommand)"/>
+        </Node>
+    </Agent>
+	
+    <Agent Name="Game Android" Type="BuildOnWindows">
+        <Node Name="Build Game Android">
+            <Property Name="AndroidGameCommand" Value="-TargetPlatform=Android -CookFlavor=ETC2 $(BaseGameCommand)"/>
+            <Log Message="BuildCookRun with arguments: $(AndroidGameCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(AndroidGameCommand)"/>
         </Node>
     </Agent>
     
-	<Agent Name="IPA iOS" Type="BuildWin64">
-		<Node Name="Compile IOS Tools">
+	<Agent Name="Game iOS" Type="BuildOnWindows">
+        <Node Name="Build Game iOS">
+            <Property Name="iOSGameCommand" Value="-TargetPlatform=IOS $(BaseGameCommand)"/>
+            <Log Message="BuildCookRun with arguments: $(iOSGameCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(iOSGameCommand)"/>
+        </Node>
+    </Agent>
+	
+	<!--
+	<Agent Name="Game iOS" Type="BuildOnWindows">
+		<Node Name="Compile Tools IOS">
 			<CsCompile Project="Engine\Source\Programs\IOS\MobileDeviceInterface\MobileDeviceInterface.csproj" Configuration="Development" Platform="AnyCPU" Arguments="/target:Rebuild" Tag="#Build IOS Tools Win64"/>
 			<CsCompile Project="Engine\Source\Programs\IOS\iPhonePackager\iPhonePackager.csproj" Configuration="Development" Platform="AnyCPU" Arguments="/target:Rebuild" Tag="#Build IOS Tools Win64"/>
 			<CsCompile Project="Engine\Source\Programs\IOS\DeploymentServer\DeploymentServer.csproj" Configuration="Development" Platform="AnyCPU" Arguments="/target:Rebuild" Tag="#Build IOS Tools Win64"/>
 		</Node>
-		<Node Name="Compile IOS" Requires="Compile IOS Tools">
+		<Node Name="Compile Game IOS" Requires="Compile Tools IOS">
 			<Compile Target="$(ProjectName)" Platform="IOS" Configuration="$(BuildConfiguration)" Arguments="-project=$(ProjectDir)\$(ProjectName).uproject $(CleanCommand) $(BuildCommand)"/>
 		</Node>
-        <Node Name="Build IPA iOS" Requires="Compile IOS">
-            <Property Name="iOSCommand" Value="-TargetPlatform=IOS $(AllCommand)"/>
-            <Log Message="BuildCookRun with arguments: $(iOSCommand)"/>
-            <Command Name="BuildCookRun" Arguments="$(iOSCommand)"/>
+        <Node Name="Build Game iOS" Requires="Compile Game IOS">
+            <Property Name="iOSGameCommand" Value="-TargetPlatform=IOS $(BaseGameCommand)"/>
+            <Log Message="BuildCookRun with arguments: $(iOSGameCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(iOSGameCommand)"/>
+        </Node>
+    </Agent>
+	-->
+	<!-- Games Ends -->
+	
+	<!-- Servers Begins -->
+	
+	<Agent Name="Server Win64" Type="BuildOnWindows">
+        <Node Name="Build Server Win64">
+            <Property Name="Win64ServerCommand" Value="-ServerTargetPlatform=Win64 $(BaseServerCommand)"/>
+            <Log Message="BuildCookRun with arguments: $(Win64ServerCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(Win64ServerCommand)"/>
         </Node>
     </Agent>
 	
+	<Agent Name="Server Linux" Type="BuildOnWindows">
+        <Node Name="Build Server Linux">
+            <Property Name="LinuxServerCommand" Value="-ServerTargetPlatform=Linux $(BaseServerCommand)"/>
+            <Log Message="BuildCookRun with arguments: $(LinuxServerCommand)"/>
+            <Command Name="BuildCookRun" Arguments="$(LinuxServerCommand)"/>
+        </Node>
+    </Agent>
+	
+	<!-- Servers Ends -->
 </BuildGraph>
