@@ -35,6 +35,7 @@
 bin/
 obj/
 
+.vscode/
 .vs/
 Binaries/
 Intermediate/
