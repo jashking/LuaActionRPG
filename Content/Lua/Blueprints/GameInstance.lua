@@ -14,6 +14,10 @@ local BlueluaLibrary = LoadClass('BlueluaLibrary')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local KismetMathLibrary = LoadClass('KismetMathLibrary')
 
+if SupportLuaPanda then
+    require('LuaPanda').start('127.0.0.1', 8818);
+end
+
 function m:ReceiveInit()
     self.StoreItems = {}
 
