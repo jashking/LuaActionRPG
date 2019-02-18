@@ -10,5 +10,7 @@ public class LuaActionRPGTarget : TargetRules
 	{
 		Type = TargetType.Game;
 		ExtraModuleNames.AddRange(new string[] { "ActionRPG" });
+
+		bUseLoggingInShipping = true;
 	}
 }
