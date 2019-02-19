@@ -15,7 +15,7 @@ local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local KismetMathLibrary = LoadClass('KismetMathLibrary')
 
 if SupportLuaPanda then
-    require('LuaPanda').start('127.0.0.1', 8818);
+    require('LuaPanda').start('127.0.0.1', 8018)
 end
 
 function m:ReceiveInit()
