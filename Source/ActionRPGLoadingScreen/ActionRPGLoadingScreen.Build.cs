@@ -9,6 +9,7 @@ public class ActionRPGLoadingScreen : ModuleRules
 	public ActionRPGLoadingScreen(ReadOnlyTargetRules Target)
 		: base(Target)
 	{
+		PrivatePCHHeaderFile = "Public/ActionRPGLoadingScreen.h";
 		PrivateIncludePaths.Add("ActionRPGLoadingScreen/Private");
 
 		PublicDependencyModuleNames.AddRange(
