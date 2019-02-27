@@ -1,3 +1,6 @@
 [submodule "Plugins/Bluelua"]
 	path = Plugins/Bluelua
 	url = https://github.com/jashking/Bluelua.git
+[submodule "Plugins/NoesisBluelua"]
+	path = Plugins/NoesisBluelua
+	url = https://github.com/jashking/NoesisBluelua.git
