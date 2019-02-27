@@ -6,7 +6,7 @@ rem 以下参数根据自己实际路径进行修改
 
 set ProjectName=LuaActionRPG
 set ProjectDir=%CurrentPath%..
-set UATPath="D:\Workspace\UnrealEngine21\Engine\Build\BatchFiles\RunUAT.bat"
+set UATPath="D:\Workspace\UnrealEngine\Engine\Build\BatchFiles\RunUAT.bat"
 set AutomationScriptPath="%CurrentPath%AllBuild.xml"
 
 rem ends
