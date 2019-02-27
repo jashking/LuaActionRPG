@@ -154,6 +154,10 @@
 			"Enabled": true
 		},
 		{
+			"Name": "NoesisBluelua",
+			"Enabled": true
+		},
+		{
 			"Name": "UdpMessaging",
 			"Enabled": false
 		}
