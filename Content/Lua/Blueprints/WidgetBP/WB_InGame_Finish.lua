@@ -6,7 +6,7 @@ local Super = Super
 -- global functions
 local LoadClass = LoadClass
 local LoadObject = LoadObject
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -23,8 +23,11 @@ function m:Construct()
 
     self:PlayAllAnimations()
 
-    Super.RestartButton.OnClicked:Add(self, self.OnRestartButtionClicked)
-    Super.MainMenuButton.OnClicked:Add(self, self.OnMainMenuButtonClicked)
+    self.RestartButtionClickedDelegate = self.RestartButtionClickedDelegate or CreateFunctionDelegate(Super, self, self.OnRestartButtionClicked)
+    self.MainMenuButtonClickedDelegate = self.MainMenuButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnMainMenuButtonClicked)
+
+    Super.RestartButton.OnClicked:Add(self.RestartButtionClickedDelegate)
+    Super.MainMenuButton.OnClicked:Add(self.MainMenuButtonClickedDelegate)
 end
 
 function m:PlayAllAnimations()
@@ -40,12 +43,12 @@ function m:PlayAllAnimations()
     GameplayStatics:PlaySound2D(Super, self.UI_WaveEnd, 1, 1, 0, nil, nil)
     Super:PlayAnimation(Super.IntroAnim, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
+    self.PlayBonusAnimDelegate = self.PlayBonusAnimDelegate or CreateFunctionDelegate(Super,
         function()
             Super:PlayAnimation(Super.BonusAnim, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, Super.IntroAnim:GetEndTime(), LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, Super.IntroAnim:GetEndTime(), CreateLatentAction(self.PlayBonusAnimDelegate))
 end
 
 function m:OnRestartButtionClicked()

@@ -7,7 +7,7 @@ local Super = Super
 local LoadClass = LoadClass
 local LoadStruct = LoadStruct
 local LoadObject = LoadObject
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -23,14 +23,23 @@ function m:Construct()
     Super.PlayerCharacter = Super:GetOwningPlayer():K2_GetPawn()
     self:SetSafemargins()
 
-    Super.NormalAttack_Button.OnClicked:Add(self, self.OnNormalAttackButtonClicked)
-    Super.Rolling_Button.OnClicked:Add(self, self.OnRollingButtonClicked)
-    Super.PotionButton.OnClicked:Add(self, self.OnPotionButtonClicked)
-    Super.Inventory_Button.OnClicked:Add(self, self.OnInventoryButtonClicked)
-    Super.PauseButton.OnClicked:Add(self, self.OnPauseButtonClicked)
-    Super.UseSkillButton.OnClicked:Add(self, self.OnUseSkillButtonClicked)
-    Super.WeaponChange_Button.OnClicked:Add(self, self.OnWeaponChangeButtonClicked)
-    Super.AutoPlayButton.OnCheckStateChanged:Add(self, self.OnAutoPlayButtonStateChanged)
+    self.NormalAttackButtonClickedDelegate = self.NormalAttackButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnNormalAttackButtonClicked)
+    self.RollingButtonClickedDelegate = self.RollingButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnRollingButtonClicked)
+    self.PotionButtonClickedDelegate = self.PotionButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnPotionButtonClicked)
+    self.InventoryButtonClickedDelegate = self.InventoryButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnInventoryButtonClicked)
+    self.PauseButtonClickedDelegate = self.PauseButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnPauseButtonClicked)
+    self.UseSkillButtonClickedDelegate = self.UseSkillButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnUseSkillButtonClicked)
+    self.WeaponChangeButtonClickedDelegate = self.WeaponChangeButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnWeaponChangeButtonClicked)
+    self.AutoPlayButtonStateChangedDelegate = self.AutoPlayButtonStateChangedDelegate or CreateFunctionDelegate(Super, self, self.OnAutoPlayButtonStateChanged)
+
+    Super.NormalAttack_Button.OnClicked:Add(self.NormalAttackButtonClickedDelegate)
+    Super.Rolling_Button.OnClicked:Add(self.RollingButtonClickedDelegate)
+    Super.PotionButton.OnClicked:Add(self.PotionButtonClickedDelegate)
+    Super.Inventory_Button.OnClicked:Add(self.InventoryButtonClickedDelegate)
+    Super.PauseButton.OnClicked:Add(self.PauseButtonClickedDelegate)
+    Super.UseSkillButton.OnClicked:Add(self.UseSkillButtonClickedDelegate)
+    Super.WeaponChange_Button.OnClicked:Add(self.WeaponChangeButtonClickedDelegate)
+    Super.AutoPlayButton.OnCheckStateChanged:Add(self.AutoPlayButtonStateChangedDelegate)
 end
 
 function m:SetSafemargins()
@@ -91,13 +100,13 @@ function m:SkillCooldown(TimeRemaining)
     Super.UseSkillButton:SetIsEnabled(false)
     Super:PlayAnimation(Super.CooldownAnim, 0, 1, Common.EUMGSequencePlayMode.Forward, 1 / TimeRemaining)
 
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
+    self.CooldownDelegate = self.CooldownDelegate or CreateFunctionDelegate(Super,
         function()
             Super.UseSkillButton:SetIsEnabled(true)
             Super:PlayAnimation(Super.SkillReadyEffect, 0, 0, Common.EUMGSequencePlayMode.PingPong, 1)
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, TimeRemaining, LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, TimeRemaining, CreateLatentAction(self.CooldownDelegate))
 end
 
 function m:OnWeaponChangeButtonClicked()

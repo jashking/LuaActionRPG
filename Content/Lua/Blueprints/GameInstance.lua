@@ -5,7 +5,6 @@ local Super = Super
 
 -- global functions
 local LoadClass = LoadClass
-local CreateDelegate = CreateDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -36,13 +35,17 @@ function m:InitializeStoreItems()
     local AsyncActionLoadPrimaryAssetListClass = LoadClass('AsyncActionLoadPrimaryAssetList')
     
     local AsyncLoaders = {}
+    
+    self.CompletedDelegates = {}
+
     for k, _ in pairs(Super.ItemSlotsPerType) do
         local OutPrimaryAssetIdList = KismetSystemLibrary:GetPrimaryAssetIdList(k)
 
         local AsyncLoader = AsyncActionLoadPrimaryAssetListClass:AsyncLoadPrimaryAssetList(Super, OutPrimaryAssetIdList, nil)
         AsyncLoaders[tostring(AsyncLoader)] = AsyncLoader
 
-        AsyncLoader.Completed:Add(function(Loaded)
+        self.CompletedDelegates[tostring(AsyncLoader)] = CreateFunctionDelegate(Super,
+            function(Loaded)
                 local CurrentLoader = AsyncLoader
 
                 for _, Item in ipairs(Loaded) do
@@ -50,7 +53,12 @@ function m:InitializeStoreItems()
                 end
                 
                 AsyncLoaders[tostring(CurrentLoader)] = nil
+
+                self.CompletedDelegates[tostring(CurrentLoader)]:Clear()
+                self.CompletedDelegates[tostring(CurrentLoader)] = nil
             end)
+
+        AsyncLoader.Completed:Add(self.CompletedDelegates[tostring(AsyncLoader)])
         AsyncLoader:Activate()
     end
 end

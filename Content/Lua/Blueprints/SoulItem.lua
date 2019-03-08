@@ -5,7 +5,6 @@ local Super = Super
 
 -- global functions
 local LoadClass = LoadClass
-local CreateDelegate = CreateDelegate
 local LoadObject = LoadObject
 
 -- C++ library
@@ -16,7 +15,8 @@ local KismetMathLibrary = LoadClass('KismetMathLibrary')
 local Common = require 'Lua.Blueprints.Common'
 
 function m:ReceiveBeginPlay()
-    Super.OnActorBeginOverlap:Add(self, self.OnActorBeginOverlap)
+    self.ActorBeginOverlapDelegate = self.ActorBeginOverlapDelegate or CreateFunctionDelegate(Super, self, self.OnActorBeginOverlap)
+    Super.OnActorBeginOverlap:Add(self.ActorBeginOverlapDelegate)
 end
 
 function m:ReceiveTick(DeltaSeconds)

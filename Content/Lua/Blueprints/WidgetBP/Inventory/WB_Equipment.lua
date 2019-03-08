@@ -5,7 +5,7 @@ local Super = Super
 
 -- global functions
 local LoadClass = LoadClass
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -17,21 +17,23 @@ local Common = require 'Lua.Blueprints.Common'
 
 function m:Construct()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
-    Super.BackButton.OnClicked:Add(self, self.OnBackButtonClicked)
+
+    self.BackButtonClickedDelegate = self.BackButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnBackButtonClicked)
+    Super.BackButton.OnClicked:Add(self.BackButtonClickedDelegate)
 end
 
 function m:OnBackButtonClicked()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
 
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
+    self.ShowInventoryUIDelegate = self.ShowInventoryUIDelegate or CreateFunctionDelegate(Super,
         function()
             local PlayerController = GameplayStatics:GetPlayerController(Super, 0):CastToLua()
             if PlayerController then
                 PlayerController:ShowInventoryUI()
             end
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, 0.5, LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, 0.5, CreateLatentAction(self.ShowInventoryUIDelegate))
 end
 
 return m

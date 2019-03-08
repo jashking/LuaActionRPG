@@ -1,6 +1,6 @@
 -- global functions
 local LoadClass = LoadClass
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local LoadObject = LoadObject
 local LoadStruct = LoadStruct
 
@@ -25,10 +25,16 @@ end
 
 function m:OnSetupPlayerInput()
     local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
-    RPGBlueprintLibrary:BindAction(self.Super, 'NormalAttack', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnNormalAttack))
-    RPGBlueprintLibrary:BindAction(self.Super, 'SpecialAttack', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnSpecialAttack))
-    RPGBlueprintLibrary:BindAction(self.Super, 'Roll', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.OnRoll))
-    RPGBlueprintLibrary:BindAction(self.Super, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, CreateDelegate(self.Super, self, self.SwitchWeapon))
+
+    self.NormalAttackActionDelegate = self.NormalAttackActionDelegate or CreateFunctionDelegate(self.Super, self, self.OnNormalAttack)
+    self.SpecialAttackActionDelegate = self.SpecialAttackActionDelegate or CreateFunctionDelegate(self.Super, self, self.OnSpecialAttack)
+    self.RollActionDelegate = self.RollActionDelegate or CreateFunctionDelegate(self.Super, self, self.OnRoll)
+    self.ChangeWeaponActionDelegate = self.ChangeWeaponActionDelegate or CreateFunctionDelegate(self.Super, self, self.SwitchWeapon)
+    
+    RPGBlueprintLibrary:BindAction(self.Super, 'NormalAttack', Common.EInputEvent.IE_Pressed, self.NormalAttackActionDelegate)
+    RPGBlueprintLibrary:BindAction(self.Super, 'SpecialAttack', Common.EInputEvent.IE_Pressed, self.SpecialAttackActionDelegate)
+    RPGBlueprintLibrary:BindAction(self.Super, 'Roll', Common.EInputEvent.IE_Pressed, self.RollActionDelegate)
+    RPGBlueprintLibrary:BindAction(self.Super, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, self.ChangeWeaponActionDelegate)
 
     RPGBlueprintLibrary:BindAxisAction(self.Super, 'MoveForward', nil)
     RPGBlueprintLibrary:BindAxisAction(self.Super, 'MoveRight', nil)

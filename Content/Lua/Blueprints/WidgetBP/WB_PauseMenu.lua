@@ -5,7 +5,7 @@ local Super = Super
 
 -- global functions
 local LoadClass = LoadClass
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -17,23 +17,28 @@ local Common = require 'Lua.Blueprints.Common'
 
 function m:Construct()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
-    Super.CloseButton.OnClicked:Add(self, self.OnCloseButtonClicked)
-    Super.OptionsButton.OnClicked:Add(self, self.OnOptionsButtonClicked)
-    Super.MainMenuButton.OnClicked:Add(self, self.OnMainMenuButtonClicked)
+
+    self.CloseButtonClickedDelegate = self.CloseButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnCloseButtonClicked)
+    self.OptionsButtonClickedDelegate = self.OptionsButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnOptionsButtonClicked)
+    self.MainMenuButtonClickedDelegate = self.MainMenuButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnMainMenuButtonClicked)
+
+    Super.CloseButton.OnClicked:Add(self.CloseButtonClickedDelegate)
+    Super.OptionsButton.OnClicked:Add(self.OptionsButtonClickedDelegate)
+    Super.MainMenuButton.OnClicked:Add(self.MainMenuButtonClickedDelegate)
 end
 
 function m:OnCloseButtonClicked()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
 
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
+    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
         function()
             local GameMode = GameplayStatics:GetGameMode(Super):CastToLua()
             GameMode:PauseGame()
             
             Super:RemoveFromParent()
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), CreateLatentAction(self.FadeOutDelegate))
 end
 
 function m:OnOptionsButtonClicked()

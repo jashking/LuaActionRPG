@@ -6,7 +6,7 @@ local Super = Super
 -- global functions
 local LoadClass = LoadClass
 local LoadStruct = LoadStruct
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -24,8 +24,11 @@ local Common = require 'Lua.Blueprints.Common'
 function m:ReceiveBeginPlay()
     Super.CapsuleCollision:IgnoreActorWhenMoving(nil, true)
 
-    Super.OnActorBeginOverlap:Add(self, self.OnActorBeginOverlap)
-    Super.OnActorEndOverlap:Add(self, self.OnActorEndOverlap)
+    self.ActorBeginOverlapDelegate = self.ActorBeginOverlapDelegate or CreateFunctionDelegate(Super, self, self.OnActorBeginOverlap)
+    self.ActorEndOverlapDelegate = self.ActorEndOverlapDelegate or CreateFunctionDelegate(Super, self, self.OnActorEndOverlap)
+
+    Super.OnActorBeginOverlap:Add(self.ActorBeginOverlapDelegate)
+    Super.OnActorEndOverlap:Add(self.ActorEndOverlapDelegate)
 end
 
 function m:OnActorBeginOverlap(OverlappedActor, OtherActor)
@@ -48,14 +51,14 @@ function m:OnActorBeginOverlap(OverlappedActor, OtherActor)
 end
 
 function m:OnActorEndOverlap(OverlappedActor, OtherActor)
-    if not self.EndOverlapLatentAction then
-        self.EndOverlapLatentAction = CreateLatentAction(CreateDelegate(Super, self,
-            function(self)
-                if self.ActorOverlapOnce then
-                    self.ActorOverlapOnce = nil
-                end
-            end))
-    end
+    self.EndOverlapDelayDelegate = self.EndOverlapDelayDelegate or CreateFunctionDelegate(Super, self,
+        function(self)
+            if self.ActorOverlapOnce then
+                self.ActorOverlapOnce = nil
+            end
+        end)
+
+    self.EndOverlapLatentAction = self.EndOverlapLatentAction or CreateLatentAction(self.EndOverlapDelayDelegate)
 
     KismetSystemLibrary:Delay(Super, 0.2, self.EndOverlapLatentAction)
 end
@@ -67,20 +70,20 @@ function m:HitPause()
 
     Super.AttackDelayCount = Super.AttackDelayCount - 1
 
-    if not self.HitPauseEndLatentAction then
-        self.HitPauseEndLatentAction = CreateLatentAction(CreateDelegate(Super,
-            function()
-                GameplayStatics:SetGlobalTimeDilation(Super, 1)
-            end))
-    end
+    self.HitPauseEndDelayDelegate = self.HitPauseEndDelayDelegate or CreateFunctionDelegate(Super,
+        function()
+            GameplayStatics:SetGlobalTimeDilation(Super, 1)
+        end)
 
-    if not self.HitPauseStartLatentAction then
-        self.HitPauseStartLatentAction = CreateLatentAction(CreateDelegate(Super, self,
-            function(self)
-                GameplayStatics:SetGlobalTimeDilation(Super, 0.1)
-                KismetSystemLibrary:Delay(Super, 0.01, self.HitPauseEndLatentAction)
-            end))
-    end
+    self.HitPauseEndLatentAction = self.HitPauseEndLatentAction or CreateLatentAction(self.HitPauseEndDelayDelegate)
+
+    self.HitPauseStartDelayDelegate = self.HitPauseStartDelayDelegate or CreateFunctionDelegate(Super, self,
+        function(self)
+            GameplayStatics:SetGlobalTimeDilation(Super, 0.1)
+            KismetSystemLibrary:Delay(Super, 0.01, self.HitPauseEndLatentAction)
+        end)
+
+    self.HitPauseStartLatentAction = self.HitPauseStartLatentAction or CreateLatentAction(self.HitPauseStartDelayDelegate)
 
     KismetSystemLibrary:Delay(Super, 0.1, self.HitPauseStartLatentAction)
 end

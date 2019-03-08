@@ -2,7 +2,10 @@ local m = {}
 
 -- parent UObject
 local Super = Super
+
 local LoadClass = LoadClass
+local CreateFunctionDelegate = CreateFunctionDelegate
+local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
@@ -18,12 +21,12 @@ function m:Construct()
 
     Super:PlayAnimation(Super.NewWaveAppear, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
+    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
         function()
             Super:RemoveFromParent()
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, Super.NewWaveAppear:GetEndTime(), LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, Super.NewWaveAppear:GetEndTime(), CreateLatentAction(self.FadeOutDelegate))
 end
 
 return m

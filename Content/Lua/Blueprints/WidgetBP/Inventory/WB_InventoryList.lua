@@ -5,7 +5,7 @@ local Super = Super
 
 -- global functions
 local LoadClass = LoadClass
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -20,13 +20,16 @@ function m:Construct()
     self:SetupItemsList()
     Super:PlayAnimation(Super.SwipeInAnimation, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
-    Super.Background.OnMouseButtonDownEvent:Add(
+    self.BackgrondMouseDownDelegate = self.BackgrondMouseDownDelegate or CreateFunctionDelegate(Super,
         function()
             self:CloseList()
             return WidgetBlueprintLibrary:Handled()
         end)
 
-    Super.ClearSlotButton.OnClicked:Add(self, self.OnClearSlotButtonClicked)
+    self.ClearSlotButtonClickedDelegate = self.ClearSlotButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnClearSlotButtonClicked)
+
+    Super.Background.OnMouseButtonDownEvent:Add(self.BackgrondMouseDownDelegate)
+    Super.ClearSlotButton.OnClicked:Add(self.ClearSlotButtonClickedDelegate)
 end
 
 function m:SetupItemsList()
@@ -87,12 +90,12 @@ end
 function m:CloseList()
     Super:PlayAnimation(Super.SwipeInAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
 
-    local LatentAction = CreateLatentAction(CreateDelegate(Super,
+    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
         function()
             Super:RemoveFromParent()
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, Super.SwipeInAnimation:GetEndTime(), LatentAction)
+    KismetSystemLibrary:Delay(Super, Super.SwipeInAnimation:GetEndTime(), CreateLatentAction(self.FadeOutDelegate))
 end
 
 return m

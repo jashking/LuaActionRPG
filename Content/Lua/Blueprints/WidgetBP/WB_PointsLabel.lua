@@ -16,7 +16,8 @@ function m:Construct()
     PlayerController.OnSoulsUpdated = self.UpdateSoulsLabel
     self:UpdateSoulsLabel()
 
-    Super.AddSoulsButton.OnClicked:Add(self, self.OnAddSoulsButtonClicked)
+    self.AddSoulsButtonClickedDelegate = self.AddSoulsButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnAddSoulsButtonClicked)
+    Super.AddSoulsButton.OnClicked:Add(self.AddSoulsButtonClickedDelegate)
 end
 
 function m:Destruct()

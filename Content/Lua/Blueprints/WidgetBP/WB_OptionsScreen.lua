@@ -5,7 +5,7 @@ local Super = Super
 
 -- global functions
 local LoadClass = LoadClass
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -21,10 +21,15 @@ function m:Construct()
     local GameInstance = GameplayStatics:GetGameInstance(Super)
     Super.CurrentOptions = GameInstance:GetGlobalOptions(nil)
 
-    Super.ClearSaveButton.OnClicked:Add(self, self.OnClearSaveButtonClicked)
-    Super.DocsButton.OnClicked:Add(self, self.OnDocsButtonClicked)
-    Super.RateButton.OnClicked:Add(self, self.OnRateButtonClicked)
-    Super.CloseButton.OnClicked:Add(self, self.OnCloseButtonClicked)
+    self.ClearSaveButtonClickedDelegate = self.ClearSaveButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnClearSaveButtonClicked)
+    self.DocsButtonClickedDelegate = self.DocsButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnDocsButtonClicked)
+    self.RateButtonClickedDelegate = self.RateButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnRateButtonClicked)
+    self.CloseButtonClickedDelegate = self.CloseButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnCloseButtonClicked)
+
+    Super.ClearSaveButton.OnClicked:Add(self.ClearSaveButtonClickedDelegate)
+    Super.DocsButton.OnClicked:Add(self.DocsButtonClickedDelegate)
+    Super.RateButton.OnClicked:Add(self.RateButtonClickedDelegate)
+    Super.CloseButton.OnClicked:Add(self.CloseButtonClickedDelegate)
 
     self:SetupUI()
 end
@@ -62,7 +67,7 @@ end
 function m:OnCloseButtonClicked()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
 
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
+    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
         function()
             Super.CurrentOptions.bMusic = Super.Music_Checkbox:IsChecked()
             Super.CurrentOptions.bSoundFX = Super.SFX_Checkbox:IsChecked()
@@ -73,9 +78,9 @@ function m:OnCloseButtonClicked()
             GameInstance:SetGlobalOptions(Super.CurrentOptions, false)
 
             Super:RemoveFromParent()
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), CreateLatentAction(self.FadeOutDelegate))
 end
 
 return m

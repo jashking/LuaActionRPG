@@ -5,6 +5,7 @@ local Super = Super
 
 -- global functions
 local LoadClass = LoadClass
+local CreateFunctionDelegate = CreateFunctionDelegate
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
@@ -30,8 +31,11 @@ function m:Construct()
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
     Super.ConfirmButton:SetIsEnabled(PlayerController:CastToLua():CanPurchaseItem(Super.ItemType))
 
-    Super.CancelButton.OnClicked:Add(self, self.OnCancelButtonClicked)
-    Super.ConfirmButton.OnClicked:Add(self, self.OnConfirmButtonClicked)
+    self.CancelButtonClickedDelegate = self.CancelButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnCancelButtonClicked)
+    self.ConfirmButtonClickedDelegate = self.ConfirmButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnConfirmButtonClicked)
+
+    Super.CancelButton.OnClicked:Add(self.CancelButtonClickedDelegate)
+    Super.ConfirmButton.OnClicked:Add(self.ConfirmButtonClickedDelegate)
 end
 
 function m:OnCancelButtonClicked()
@@ -48,12 +52,12 @@ end
 function m:FadeOut()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 2)
 
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
+    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
         function()
             Super:RemoveFromParent()
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), CreateLatentAction(self.FadeOutDelegate))
 end
 
 return m

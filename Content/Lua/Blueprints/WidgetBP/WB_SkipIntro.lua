@@ -7,7 +7,7 @@ local Super = Super
 local Common = require 'Lua.Blueprints.Common'
 
 function m:Construct()
-    Super.SkipButton.OnClicked:Add(
+    self.SkipButtonClickedDelegate = self.SkipButtonClickedDelegate or CreateFunctionDelegate(Super,
         function ()
             local GameplayStatics = LoadClass('GameplayStatics')
             local PlayerController = GameplayStatics:GetPlayerController(Super, 0):CastToLua()
@@ -15,6 +15,8 @@ function m:Construct()
             PlayerController:StopPlayingSkippableCutscene()
             Super:RemoveFromParent()
         end)
+    
+    Super.SkipButton.OnClicked:Add(self.SkipButtonClickedDelegate)
 
     Super:PlayAnimation(Super.SkipTextAnim, 0, 0, Common.EUMGSequencePlayMode.Forward, 0.5)
 end

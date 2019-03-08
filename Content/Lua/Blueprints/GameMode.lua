@@ -6,7 +6,7 @@ local Super = Super
 -- global functions
 local LoadClass = LoadClass
 local LoadObject = LoadObject
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -38,7 +38,8 @@ function m:StartGame()
 end
 
 function m:StartPlayTimer()
-    KismetSystemLibrary:K2_SetTimerDelegate(CreateDelegate(Super, self, self.UpdatePlayTime), 1, true)
+    self.PlayTimerDelegate = self.PlayTimerDelegate or CreateFunctionDelegate(Super, self, self.UpdatePlayTime)
+    KismetSystemLibrary:K2_SetTimerDelegate(self.PlayTimerDelegate, 1, true)
     Super.StartTime = GameplayStatics:GetTimeSeconds(Super)
 end
 
@@ -55,7 +56,7 @@ end
 
 --[[
 function m:StartEnemySpawn()
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super, self, self.StartNewWave))
+    local LatentActionInfo = CreateLatentAction(CreateFunctionDelegate(Super, self, self.StartNewWave))
 
     KismetSystemLibrary:Delay(Super, 1, LatentActionInfo)
 end
@@ -85,7 +86,13 @@ end
 function m:GameOver()
     GameplayStatics:SetGlobalTimeDilation(Super, 0.25)
     
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
+    if self.PlayTimerDelegate then
+        KismetSystemLibrary:K2_ClearTimerDelegate(self.PlayTimerDelegate)
+        self.PlayTimerDelegate:Clear()
+        self.PlayTimerDelegate = nil
+    end
+
+    self.ShowResultUIDelegate = self.ShowResultUIDelegate or CreateFunctionDelegate(Super,
         function()
             GameplayStatics:SetGlobalTimeDilation(Super, 1)
             GameplayStatics:SetGamePaused(Super, true)
@@ -96,9 +103,9 @@ function m:GameOver()
             end
 
             Super.ResultUI:AddToViewport(0)
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, 0.5, LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, 0.5, CreateLatentAction(self.ShowResultUIDelegate))
 end
 
 function m:GoHome()

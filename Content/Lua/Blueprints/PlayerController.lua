@@ -5,7 +5,7 @@ local Super = Super
 
 -- global functions
 local LoadClass = LoadClass
-local CreateDelegate = CreateDelegate
+local CreateFunctionDelegate = CreateFunctionDelegate
 local CreateLatentAction = CreateLatentAction
 
 -- C++ library
@@ -20,7 +20,9 @@ local Common = require 'Lua.Blueprints.Common'
 function m:PlaySkippableCutscene(SequencePlayer)
     Super.SequencePlayer = SequencePlayer
 
-    SequencePlayer.OnFinished:Add(self, self.StopPlayingSkippableCutscene)
+    self.PlayFinishedDelegate = self.PlayFinishedDelegate or CreateFunctionDelegate(Super, self, self.StopPlayingSkippableCutscene)
+
+    SequencePlayer.OnFinished:Add(self.PlayFinishedDelegate)
     SequencePlayer:Play()
 
     local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
@@ -78,14 +80,15 @@ function m:ReceivePossess(NewPawn)
     Super.PlayerCharacter = NewPawn
     self:CreateHUD()
 
-    Super.OnInventoryItemChanged:Add(self, self.OnInventoryItemChanged)
+    self.InventoryItemChangedDelegate = self.InventoryItemChangedDelegate or CreateFunctionDelegate(Super, self, self.OnInventoryItemChanged)
+    Super.OnInventoryItemChanged:Add(self.InventoryItemChangedDelegate)
 
-    local LatentActionInfo = CreateLatentAction(CreateDelegate(Super,
+    self.CreateAllWeaponsDelegate = self.CreateAllWeaponsDelegate or CreateFunctionDelegate(Super,
         function()
             Super.PlayerCharacter:CastToLua():CreateAllWeapons()
-        end))
+        end)
 
-    KismetSystemLibrary:Delay(Super, 0.025, LatentActionInfo)
+    KismetSystemLibrary:Delay(Super, 0.025, CreateLatentAction(self.CreateAllWeaponsDelegate))
 end
 
 function m:OnInventoryItemChanged(bAdded, Item)
@@ -120,14 +123,19 @@ end
 function m:ReceiveBeginPlay()
     local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
 
+    self.RotateCameraDelegate = self.RotateCameraDelegate or CreateFunctionDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end)
+    self.TouchPressedDelegate = self.TouchPressedDelegate or CreateFunctionDelegate(Super, self, self.OnTouchPressed)
+    self.TouchRepeatedDelegate = self.TouchRepeatedDelegate or CreateFunctionDelegate(Super, self, self.OnTouchRepeated)
+    self.TouchReleasedDelegate = self.TouchReleasedDelegate or CreateFunctionDelegate(Super, self, self.OnTouchReleased)
+
     RPGBlueprintLibrary:BindAxisAction(Super, 'MoveForward', nil)
     RPGBlueprintLibrary:BindAxisAction(Super, 'MoveRight', nil)
-    RPGBlueprintLibrary:BindAxisAction(Super, 'RotateCamera', CreateDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end))
+    RPGBlueprintLibrary:BindAxisAction(Super, 'RotateCamera', self.RotateCameraDelegate)
 
     local EInputEvent = Common.EInputEvent
-    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Pressed, CreateDelegate(Super, self, self.OnTouchPressed))
-    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Repeat, CreateDelegate(Super, self, self.OnTouchRepeated))
-    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Released, CreateDelegate(Super, self, self.OnTouchReleased))
+    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Pressed, self.TouchPressedDelegate)
+    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Repeat, self.TouchRepeatedDelegate)
+    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Released, self.TouchReleasedDelegate)
 end
 
 function m:OnTouchPressed(FingerIndex, Location)
@@ -150,9 +158,8 @@ function m:OnTouchReleased(FingerIndex, Location)
 end
 
 function m:ShowInventoryUI()
-    if not self.UIEquippeditem_Delegate then
-        self.UIEquippeditem_Delegate = Super.OnSlottedItemChanged:Add(self, self.UIEquippeditem)
-    end
+    self.SlottedItemChangedDelegate = self.SlottedItemChangedDelegate or CreateFunctionDelegate(Super, self, self.UIEquippeditem)
+    Super.OnSlottedItemChanged:Add(self.SlottedItemChangedDelegate)
 
     if Super.InventoryUI then
         Super.InventoryUI:RemoveFromParent()
