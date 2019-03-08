@@ -6,11 +6,11 @@ local Super = Super
 -- global functions
 local LoadClass = LoadClass
 local CreateFunctionDelegate = CreateFunctionDelegate
-local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
 -- Common
 local Common = require 'Lua.Blueprints.Common'
@@ -33,7 +33,7 @@ function m:OnBackButtonClicked()
             end
         end)
 
-    KismetSystemLibrary:Delay(Super, 0.5, CreateLatentAction(self.ShowInventoryUIDelegate))
+    BlueluaLibrary:Delay(Super, 0.5, -1, self.ShowInventoryUIDelegate)
 end
 
 return m

@@ -7,12 +7,12 @@ local Super = Super
 local LoadClass = LoadClass
 local LoadObject = LoadObject
 local CreateFunctionDelegate = CreateFunctionDelegate
-local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
 function m:ReceiveBeginPlay()
     self:PlayDefaultIntroCutscene()
@@ -56,9 +56,7 @@ end
 
 --[[
 function m:StartEnemySpawn()
-    local LatentActionInfo = CreateLatentAction(CreateFunctionDelegate(Super, self, self.StartNewWave))
-
-    KismetSystemLibrary:Delay(Super, 1, LatentActionInfo)
+    BlueluaLibrary:Delay(Super, 1, -1, CreateFunctionDelegate(Super, self, self.StartNewWave))
 end
 
 function m:StartNewWave()
@@ -105,7 +103,7 @@ function m:GameOver()
             Super.ResultUI:AddToViewport(0)
         end)
 
-    KismetSystemLibrary:Delay(Super, 0.5, CreateLatentAction(self.ShowResultUIDelegate))
+    BlueluaLibrary:Delay(Super, 0.5, -1, self.ShowResultUIDelegate)
 end
 
 function m:GoHome()

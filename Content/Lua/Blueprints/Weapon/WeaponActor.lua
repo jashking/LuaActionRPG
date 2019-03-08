@@ -7,13 +7,13 @@ local Super = Super
 local LoadClass = LoadClass
 local LoadStruct = LoadStruct
 local CreateFunctionDelegate = CreateFunctionDelegate
-local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetMathLibrary = LoadClass('KismetMathLibrary')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local AbilitySystemBlueprintLibrary = LoadClass('AbilitySystemBlueprintLibrary')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
 -- Structures
 local FGameplayEventData = LoadStruct('GameplayEventData')
@@ -58,9 +58,7 @@ function m:OnActorEndOverlap(OverlappedActor, OtherActor)
             end
         end)
 
-    self.EndOverlapLatentAction = self.EndOverlapLatentAction or CreateLatentAction(self.EndOverlapDelayDelegate)
-
-    KismetSystemLibrary:Delay(Super, 0.2, self.EndOverlapLatentAction)
+    BlueluaLibrary:Delay(Super, 0.2, -1, self.EndOverlapDelayDelegate)
 end
 
 function m:HitPause()
@@ -75,17 +73,13 @@ function m:HitPause()
             GameplayStatics:SetGlobalTimeDilation(Super, 1)
         end)
 
-    self.HitPauseEndLatentAction = self.HitPauseEndLatentAction or CreateLatentAction(self.HitPauseEndDelayDelegate)
-
     self.HitPauseStartDelayDelegate = self.HitPauseStartDelayDelegate or CreateFunctionDelegate(Super, self,
         function(self)
             GameplayStatics:SetGlobalTimeDilation(Super, 0.1)
-            KismetSystemLibrary:Delay(Super, 0.01, self.HitPauseEndLatentAction)
+            BlueluaLibrary:Delay(Super, 0.01, -1, self.HitPauseEndDelayDelegate)
         end)
 
-    self.HitPauseStartLatentAction = self.HitPauseStartLatentAction or CreateLatentAction(self.HitPauseStartDelayDelegate)
-
-    KismetSystemLibrary:Delay(Super, 0.1, self.HitPauseStartLatentAction)
+    BlueluaLibrary:Delay(Super, 0.1, -1, self.HitPauseStartDelayDelegate)
 end
 
 function m:BeginWeaponAttack(EventTag, AttackDelayTime, MaxAttackDelayCount)

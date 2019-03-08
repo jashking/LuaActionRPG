@@ -8,13 +8,13 @@ local LoadClass = LoadClass
 local LoadStruct = LoadStruct
 local LoadObject = LoadObject
 local CreateFunctionDelegate = CreateFunctionDelegate
-local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local MobilePatchingLibrary = LoadClass('MobilePatchingLibrary')
 local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
 -- Common
 local Common = require 'Lua.Blueprints.Common'
@@ -106,7 +106,7 @@ function m:SkillCooldown(TimeRemaining)
             Super:PlayAnimation(Super.SkillReadyEffect, 0, 0, Common.EUMGSequencePlayMode.PingPong, 1)
         end)
 
-    KismetSystemLibrary:Delay(Super, TimeRemaining, CreateLatentAction(self.CooldownDelegate))
+    BlueluaLibrary:Delay(Super, TimeRemaining, -1, self.CooldownDelegate)
 end
 
 function m:OnWeaponChangeButtonClicked()

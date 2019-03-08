@@ -6,12 +6,12 @@ local Super = Super
 -- global functions
 local LoadClass = LoadClass
 local CreateFunctionDelegate = CreateFunctionDelegate
-local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
 -- Common
 local Common = require 'Lua.Blueprints.Common'
@@ -95,7 +95,7 @@ function m:CloseList()
             Super:RemoveFromParent()
         end)
 
-    KismetSystemLibrary:Delay(Super, Super.SwipeInAnimation:GetEndTime(), CreateLatentAction(self.FadeOutDelegate))
+    BlueluaLibrary:Delay(Super, Super.SwipeInAnimation:GetEndTime(), -1, self.FadeOutDelegate)
 end
 
 return m

@@ -7,11 +7,11 @@ local Super = Super
 local LoadClass = LoadClass
 local LoadObject = LoadObject
 local CreateFunctionDelegate = CreateFunctionDelegate
-local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
 -- Common
 local Common = require 'Lua.Blueprints.Common'
@@ -48,7 +48,7 @@ function m:PlayAllAnimations()
             Super:PlayAnimation(Super.BonusAnim, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
         end)
 
-    KismetSystemLibrary:Delay(Super, Super.IntroAnim:GetEndTime(), CreateLatentAction(self.PlayBonusAnimDelegate))
+    BlueluaLibrary:Delay(Super, Super.IntroAnim:GetEndTime(), -1, self.PlayBonusAnimDelegate)
 end
 
 function m:OnRestartButtionClicked()

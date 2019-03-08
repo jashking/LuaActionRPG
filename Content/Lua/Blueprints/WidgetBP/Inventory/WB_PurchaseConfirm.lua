@@ -10,6 +10,7 @@ local CreateFunctionDelegate = CreateFunctionDelegate
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
 -- Common
 local Common = require 'Lua.Blueprints.Common'
@@ -57,7 +58,7 @@ function m:FadeOut()
             Super:RemoveFromParent()
         end)
 
-    KismetSystemLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), CreateLatentAction(self.FadeOutDelegate))
+    BlueluaLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), -1, self.FadeOutDelegate)
 end
 
 return m

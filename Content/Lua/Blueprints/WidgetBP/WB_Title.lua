@@ -7,11 +7,11 @@ local Super = Super
 local LoadClass = LoadClass
 local LoadObject = LoadObject
 local CreateFunctionDelegate = CreateFunctionDelegate
-local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
 -- Common
 local Common = require 'Lua.Blueprints.Common'
@@ -29,7 +29,7 @@ function m:Construct()
             GameplayStatics:PlaySound2D(Super, self.BossBattle, 1, 1, 0, nil, nil)
         end)
 
-    KismetSystemLibrary:Delay(Super, 3, CreateLatentAction(self.PlaySoundDelegate))
+    BlueluaLibrary:Delay(Super, 3, -1, self.PlaySoundDelegate)
 
     self.QuitGameButtonClickedDelegate = self.QuitGameButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnQuitGameButtonClicked)
     self.StartGameButtonClickedDelegate = self.StartGameButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnStartGameButtonClicked)

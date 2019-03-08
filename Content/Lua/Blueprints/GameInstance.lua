@@ -5,7 +5,6 @@ local Super = Super
 
 -- global functions
 local LoadClass = LoadClass
-local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')

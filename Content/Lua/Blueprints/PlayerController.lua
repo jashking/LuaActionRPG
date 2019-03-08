@@ -6,13 +6,13 @@ local Super = Super
 -- global functions
 local LoadClass = LoadClass
 local CreateFunctionDelegate = CreateFunctionDelegate
-local CreateLatentAction = CreateLatentAction
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
 local KismetSystemLibrary = LoadClass('KismetSystemLibrary')
 local KismetMathLibrary = LoadClass('KismetMathLibrary')
 local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
+local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
 -- Common
 local Common = require 'Lua.Blueprints.Common'
@@ -88,7 +88,7 @@ function m:ReceivePossess(NewPawn)
             Super.PlayerCharacter:CastToLua():CreateAllWeapons()
         end)
 
-    KismetSystemLibrary:Delay(Super, 0.025, CreateLatentAction(self.CreateAllWeaponsDelegate))
+    BlueluaLibrary:Delay(Super, 0.025, -1, self.CreateAllWeaponsDelegate)
 end
 
 function m:OnInventoryItemChanged(bAdded, Item)
