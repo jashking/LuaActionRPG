@@ -34,8 +34,6 @@ function m:InitializeStoreItems()
     local AsyncActionLoadPrimaryAssetListClass = LoadClass('AsyncActionLoadPrimaryAssetList')
     
     local AsyncLoaders = {}
-    
-    self.CompletedDelegates = {}
 
     for k, _ in pairs(Super.ItemSlotsPerType) do
         local OutPrimaryAssetIdList = KismetSystemLibrary:GetPrimaryAssetIdList(k)
@@ -43,7 +41,7 @@ function m:InitializeStoreItems()
         local AsyncLoader = AsyncActionLoadPrimaryAssetListClass:AsyncLoadPrimaryAssetList(Super, OutPrimaryAssetIdList, nil)
         AsyncLoaders[tostring(AsyncLoader)] = AsyncLoader
 
-        self.CompletedDelegates[tostring(AsyncLoader)] = CreateFunctionDelegate(Super,
+        local LoadCompletedDelegate = CreateFunctionDelegate(Super,
             function(Loaded)
                 local CurrentLoader = AsyncLoader
 
@@ -52,12 +50,9 @@ function m:InitializeStoreItems()
                 end
                 
                 AsyncLoaders[tostring(CurrentLoader)] = nil
-
-                self.CompletedDelegates[tostring(CurrentLoader)]:Clear()
-                self.CompletedDelegates[tostring(CurrentLoader)] = nil
             end)
 
-        AsyncLoader.Completed:Add(self.CompletedDelegates[tostring(AsyncLoader)])
+        AsyncLoader.Completed:Add(LoadCompletedDelegate)
         AsyncLoader:Activate()
     end
 end

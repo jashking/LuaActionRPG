@@ -20,16 +20,14 @@ function m:Construct()
     self:SetupItemsList()
     Super:PlayAnimation(Super.SwipeInAnimation, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
-    self.BackgrondMouseDownDelegate = self.BackgrondMouseDownDelegate or CreateFunctionDelegate(Super,
+    local BackgrondMouseDownDelegate = CreateFunctionDelegate(Super,
         function()
             self:CloseList()
             return WidgetBlueprintLibrary:Handled()
         end)
 
-    self.ClearSlotButtonClickedDelegate = self.ClearSlotButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnClearSlotButtonClicked)
-
-    Super.Background.OnMouseButtonDownEvent:Add(self.BackgrondMouseDownDelegate)
-    Super.ClearSlotButton.OnClicked:Add(self.ClearSlotButtonClickedDelegate)
+    Super.Background.OnMouseButtonDownEvent:Add(BackgrondMouseDownDelegate)
+    Super.ClearSlotButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnClearSlotButtonClicked))
 end
 
 function m:SetupItemsList()
@@ -90,12 +88,7 @@ end
 function m:CloseList()
     Super:PlayAnimation(Super.SwipeInAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
 
-    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
-        function()
-            Super:RemoveFromParent()
-        end)
-
-    BlueluaLibrary:Delay(Super, Super.SwipeInAnimation:GetEndTime(), -1, self.FadeOutDelegate)
+    BlueluaLibrary:Delay(Super, Super.SwipeInAnimation:GetEndTime(), -1, CreateFunctionDelegate(Super, function() Super:RemoveFromParent() end))
 end
 
 return m

@@ -23,11 +23,8 @@ function m:Construct()
 
     self:PlayAllAnimations()
 
-    self.RestartButtionClickedDelegate = self.RestartButtionClickedDelegate or CreateFunctionDelegate(Super, self, self.OnRestartButtionClicked)
-    self.MainMenuButtonClickedDelegate = self.MainMenuButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnMainMenuButtonClicked)
-
-    Super.RestartButton.OnClicked:Add(self.RestartButtionClickedDelegate)
-    Super.MainMenuButton.OnClicked:Add(self.MainMenuButtonClickedDelegate)
+    Super.RestartButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnRestartButtionClicked))
+    Super.MainMenuButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnMainMenuButtonClicked))
 end
 
 function m:PlayAllAnimations()
@@ -43,12 +40,12 @@ function m:PlayAllAnimations()
     GameplayStatics:PlaySound2D(Super, self.UI_WaveEnd, 1, 1, 0, nil, nil)
     Super:PlayAnimation(Super.IntroAnim, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
-    self.PlayBonusAnimDelegate = self.PlayBonusAnimDelegate or CreateFunctionDelegate(Super,
+    local PlayBonusAnimDelegate = CreateFunctionDelegate(Super,
         function()
             Super:PlayAnimation(Super.BonusAnim, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
         end)
 
-    BlueluaLibrary:Delay(Super, Super.IntroAnim:GetEndTime(), -1, self.PlayBonusAnimDelegate)
+    BlueluaLibrary:Delay(Super, Super.IntroAnim:GetEndTime(), -1, PlayBonusAnimDelegate)
 end
 
 function m:OnRestartButtionClicked()

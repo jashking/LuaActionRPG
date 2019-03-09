@@ -20,7 +20,7 @@ function m:Construct()
     Super.QuitGameButton:SetVisibility(Common:IsRunningOnMobile() and Common.ESlateVisibility.Collapsed or Common.ESlateVisibility.Visible)
     Super:PlayAnimation(Super.TitleAnimation, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
-    self.PlaySoundDelegate = self.PlaySoundDelegate or CreateFunctionDelegate(Super, self,
+    local PlaySoundDelegate = CreateFunctionDelegate(Super, self,
         function()
             if not self.BossBattle or not self.BossBattle:IsValid() then
                 self.BossBattle = LoadObject(Super, '/Game/Assets/Sounds/Music/Ice_BossBattle01_Cue.Ice_BossBattle01_Cue')
@@ -29,15 +29,11 @@ function m:Construct()
             GameplayStatics:PlaySound2D(Super, self.BossBattle, 1, 1, 0, nil, nil)
         end)
 
-    BlueluaLibrary:Delay(Super, 3, -1, self.PlaySoundDelegate)
+    BlueluaLibrary:Delay(Super, 3, -1, PlaySoundDelegate)
 
-    self.QuitGameButtonClickedDelegate = self.QuitGameButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnQuitGameButtonClicked)
-    self.StartGameButtonClickedDelegate = self.StartGameButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnStartGameButtonClicked)
-    self.OptionsButtonClickedDelegate = self.OptionsButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnOptionsButtonClicked)
-
-    Super.QuitGameButton.OnClicked:Add(self.QuitGameButtonClickedDelegate)
-    Super.StartGameButton.OnClicked:Add(self.StartGameButtonClickedDelegate)
-    Super.OptionsButton.OnClicked:Add(self.OptionsButtonClickedDelegate)
+    Super.QuitGameButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnQuitGameButtonClicked))
+    Super.StartGameButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnStartGameButtonClicked))
+    Super.OptionsButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnOptionsButtonClicked))
 end
 
 function m:OnStartGameButtonClicked()

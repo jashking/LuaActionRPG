@@ -15,14 +15,11 @@ local Common = require 'Lua.Blueprints.Common'
 function m:Construct()
     self:RefreshItem()
 
-    self.SlottedItemChangedDelegate = self.SlottedItemChangedDelegate or CreateFunctionDelegate(Super, self, self.OnSlottedItemChanged)
-    self.EquipButtonClickedDelegate = self.EquipButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnEquipButtonClicked)
-
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
-    PlayerController.OnSlottedItemChanged:Add(self.SlottedItemChangedDelegate)
+    PlayerController.OnSlottedItemChanged:Add(CreateFunctionDelegate(Super, self, self.OnSlottedItemChanged))
 
     Super.SlotTypeLabel:SetText(Super.EquipSlot.ItemType.Name)
-    Super.EquipButton.OnClicked:Add(self.EquipButtonClickedDelegate)
+    Super.EquipButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnEquipButtonClicked))
 end
 
 function m:RefreshItem()

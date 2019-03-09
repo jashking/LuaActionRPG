@@ -7,6 +7,7 @@ local Super = Super
 local LoadClass = LoadClass
 local LoadObject = LoadObject
 local CreateFunctionDelegate = CreateFunctionDelegate
+local DeleteFunctionDelegate = DeleteFunctionDelegate
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
@@ -86,11 +87,11 @@ function m:GameOver()
     
     if self.PlayTimerDelegate then
         KismetSystemLibrary:K2_ClearTimerDelegate(self.PlayTimerDelegate)
-        self.PlayTimerDelegate:Clear()
+        DeleteFunctionDelegate(self.PlayTimerDelegate)
         self.PlayTimerDelegate = nil
     end
 
-    self.ShowResultUIDelegate = self.ShowResultUIDelegate or CreateFunctionDelegate(Super,
+    local ShowResultUIDelegate = CreateFunctionDelegate(Super,
         function()
             GameplayStatics:SetGlobalTimeDilation(Super, 1)
             GameplayStatics:SetGamePaused(Super, true)
@@ -103,7 +104,7 @@ function m:GameOver()
             Super.ResultUI:AddToViewport(0)
         end)
 
-    BlueluaLibrary:Delay(Super, 0.5, -1, self.ShowResultUIDelegate)
+    BlueluaLibrary:Delay(Super, 0.5, -1, ShowResultUIDelegate)
 end
 
 function m:GoHome()

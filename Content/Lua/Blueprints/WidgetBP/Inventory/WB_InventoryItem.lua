@@ -17,8 +17,7 @@ function m:Construct()
     Super.ItemName:SetText(Super.ItemClass.ItemName)
     Super.LongDescription:SetText(Super.ItemClass.ItemDescription)
 
-    self.InventoryButtonClickedDelegate = self.InventoryButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnInventoryButtonClicked)
-    Super.InventoryButton.OnClicked:Add(self.InventoryButtonClickedDelegate)
+    Super.InventoryButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnInventoryButtonClicked))
 end
 
 function m:OnInventoryButtonClicked()

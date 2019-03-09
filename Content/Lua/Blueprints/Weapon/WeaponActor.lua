@@ -24,11 +24,8 @@ local Common = require 'Lua.Blueprints.Common'
 function m:ReceiveBeginPlay()
     Super.CapsuleCollision:IgnoreActorWhenMoving(nil, true)
 
-    self.ActorBeginOverlapDelegate = self.ActorBeginOverlapDelegate or CreateFunctionDelegate(Super, self, self.OnActorBeginOverlap)
-    self.ActorEndOverlapDelegate = self.ActorEndOverlapDelegate or CreateFunctionDelegate(Super, self, self.OnActorEndOverlap)
-
-    Super.OnActorBeginOverlap:Add(self.ActorBeginOverlapDelegate)
-    Super.OnActorEndOverlap:Add(self.ActorEndOverlapDelegate)
+    Super.OnActorBeginOverlap:Add(CreateFunctionDelegate(Super, self, self.OnActorBeginOverlap))
+    Super.OnActorEndOverlap:Add(CreateFunctionDelegate(Super, self, self.OnActorEndOverlap))
 end
 
 function m:OnActorBeginOverlap(OverlappedActor, OtherActor)

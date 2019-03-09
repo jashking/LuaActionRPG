@@ -18,19 +18,15 @@ local Common = require 'Lua.Blueprints.Common'
 function m:Construct()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
-    self.CloseButtonClickedDelegate = self.CloseButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnCloseButtonClicked)
-    self.OptionsButtonClickedDelegate = self.OptionsButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnOptionsButtonClicked)
-    self.MainMenuButtonClickedDelegate = self.MainMenuButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnMainMenuButtonClicked)
-
-    Super.CloseButton.OnClicked:Add(self.CloseButtonClickedDelegate)
-    Super.OptionsButton.OnClicked:Add(self.OptionsButtonClickedDelegate)
-    Super.MainMenuButton.OnClicked:Add(self.MainMenuButtonClickedDelegate)
+    Super.CloseButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnCloseButtonClicked))
+    Super.OptionsButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnOptionsButtonClicked))
+    Super.MainMenuButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnMainMenuButtonClicked))
 end
 
 function m:OnCloseButtonClicked()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
 
-    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
+    local FadeOutDelegate = CreateFunctionDelegate(Super,
         function()
             local GameMode = GameplayStatics:GetGameMode(Super):CastToLua()
             GameMode:PauseGame()
@@ -38,7 +34,7 @@ function m:OnCloseButtonClicked()
             Super:RemoveFromParent()
         end)
 
-    BlueluaLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), -1, self.FadeOutDelegate)
+    BlueluaLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), -1, FadeOutDelegate)
 end
 
 function m:OnOptionsButtonClicked()

@@ -13,18 +13,18 @@ local Common = require 'Lua.Blueprints.Common'
 
 function m:Construct()
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0):CastToLua()
-    PlayerController.OnSoulsUpdated = self.UpdateSoulsLabel
+    PlayerController:AddOnSoulsUpdatedNotify(self.UpdateSoulsLabel)
+
     self:UpdateSoulsLabel()
 
-    self.AddSoulsButtonClickedDelegate = self.AddSoulsButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnAddSoulsButtonClicked)
-    Super.AddSoulsButton.OnClicked:Add(self.AddSoulsButtonClickedDelegate)
+    Super.AddSoulsButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnAddSoulsButtonClicked))
 end
 
 function m:Destruct()
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
     PlayerController = PlayerController and PlayerController:CastToLua() or nil
     if PlayerController then
-        PlayerController.OnSoulsUpdated = nil
+        PlayerController:RemoveOnSoulsUpdatedNotify(self.UpdateSoulsLabel)
     end
 end
 

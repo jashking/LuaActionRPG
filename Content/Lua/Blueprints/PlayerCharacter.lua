@@ -26,15 +26,10 @@ end
 function m:OnSetupPlayerInput()
     local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
 
-    self.NormalAttackActionDelegate = self.NormalAttackActionDelegate or CreateFunctionDelegate(self.Super, self, self.OnNormalAttack)
-    self.SpecialAttackActionDelegate = self.SpecialAttackActionDelegate or CreateFunctionDelegate(self.Super, self, self.OnSpecialAttack)
-    self.RollActionDelegate = self.RollActionDelegate or CreateFunctionDelegate(self.Super, self, self.OnRoll)
-    self.ChangeWeaponActionDelegate = self.ChangeWeaponActionDelegate or CreateFunctionDelegate(self.Super, self, self.SwitchWeapon)
-    
-    RPGBlueprintLibrary:BindAction(self.Super, 'NormalAttack', Common.EInputEvent.IE_Pressed, self.NormalAttackActionDelegate)
-    RPGBlueprintLibrary:BindAction(self.Super, 'SpecialAttack', Common.EInputEvent.IE_Pressed, self.SpecialAttackActionDelegate)
-    RPGBlueprintLibrary:BindAction(self.Super, 'Roll', Common.EInputEvent.IE_Pressed, self.RollActionDelegate)
-    RPGBlueprintLibrary:BindAction(self.Super, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, self.ChangeWeaponActionDelegate)
+    RPGBlueprintLibrary:BindAction(self.Super, 'NormalAttack', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnNormalAttack))
+    RPGBlueprintLibrary:BindAction(self.Super, 'SpecialAttack', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnSpecialAttack))
+    RPGBlueprintLibrary:BindAction(self.Super, 'Roll', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnRoll))
+    RPGBlueprintLibrary:BindAction(self.Super, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.SwitchWeapon))
 
     RPGBlueprintLibrary:BindAxisAction(self.Super, 'MoveForward', nil)
     RPGBlueprintLibrary:BindAxisAction(self.Super, 'MoveRight', nil)

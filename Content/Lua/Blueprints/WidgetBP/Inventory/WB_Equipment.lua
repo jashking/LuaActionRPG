@@ -18,14 +18,13 @@ local Common = require 'Lua.Blueprints.Common'
 function m:Construct()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
-    self.BackButtonClickedDelegate = self.BackButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnBackButtonClicked)
-    Super.BackButton.OnClicked:Add(self.BackButtonClickedDelegate)
+    Super.BackButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnBackButtonClicked))
 end
 
 function m:OnBackButtonClicked()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
 
-    self.ShowInventoryUIDelegate = self.ShowInventoryUIDelegate or CreateFunctionDelegate(Super,
+    local ShowInventoryUIDelegate = CreateFunctionDelegate(Super,
         function()
             local PlayerController = GameplayStatics:GetPlayerController(Super, 0):CastToLua()
             if PlayerController then
@@ -33,7 +32,7 @@ function m:OnBackButtonClicked()
             end
         end)
 
-    BlueluaLibrary:Delay(Super, 0.5, -1, self.ShowInventoryUIDelegate)
+    BlueluaLibrary:Delay(Super, 0.5, -1, ShowInventoryUIDelegate)
 end
 
 return m

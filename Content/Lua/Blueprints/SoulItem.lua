@@ -15,8 +15,7 @@ local KismetMathLibrary = LoadClass('KismetMathLibrary')
 local Common = require 'Lua.Blueprints.Common'
 
 function m:ReceiveBeginPlay()
-    self.ActorBeginOverlapDelegate = self.ActorBeginOverlapDelegate or CreateFunctionDelegate(Super, self, self.OnActorBeginOverlap)
-    Super.OnActorBeginOverlap:Add(self.ActorBeginOverlapDelegate)
+    Super.OnActorBeginOverlap:Add(CreateFunctionDelegate(Super, self, self.OnActorBeginOverlap))
 end
 
 function m:ReceiveTick(DeltaSeconds)

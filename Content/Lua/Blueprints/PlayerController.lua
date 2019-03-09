@@ -20,9 +20,7 @@ local Common = require 'Lua.Blueprints.Common'
 function m:PlaySkippableCutscene(SequencePlayer)
     Super.SequencePlayer = SequencePlayer
 
-    self.PlayFinishedDelegate = self.PlayFinishedDelegate or CreateFunctionDelegate(Super, self, self.StopPlayingSkippableCutscene)
-
-    SequencePlayer.OnFinished:Add(self.PlayFinishedDelegate)
+    SequencePlayer.OnFinished:Add(CreateFunctionDelegate(Super, self, self.StopPlayingSkippableCutscene))
     SequencePlayer:Play()
 
     local WidgetBlueprintLibrary = LoadClass('WidgetBlueprintLibrary')
@@ -80,20 +78,46 @@ function m:ReceivePossess(NewPawn)
     Super.PlayerCharacter = NewPawn
     self:CreateHUD()
 
-    self.InventoryItemChangedDelegate = self.InventoryItemChangedDelegate or CreateFunctionDelegate(Super, self, self.OnInventoryItemChanged)
-    Super.OnInventoryItemChanged:Add(self.InventoryItemChangedDelegate)
+    Super.OnInventoryItemChanged:Add(CreateFunctionDelegate(Super, self, self.OnInventoryItemChanged))
 
-    self.CreateAllWeaponsDelegate = self.CreateAllWeaponsDelegate or CreateFunctionDelegate(Super,
+    local CreateAllWeaponsDelegate = CreateFunctionDelegate(Super,
         function()
             Super.PlayerCharacter:CastToLua():CreateAllWeapons()
         end)
 
-    BlueluaLibrary:Delay(Super, 0.025, -1, self.CreateAllWeaponsDelegate)
+    BlueluaLibrary:Delay(Super, 0.025, -1, CreateAllWeaponsDelegate)
 end
 
 function m:OnInventoryItemChanged(bAdded, Item)
-    if KismetMathLibrary:EqualEqual_ObjectObject(Super.SoulsItem, Item) and self.OnSoulsUpdated then
-        self.OnSoulsUpdated(nil, Super:GetInventoryItemCount(Super.SoulsItem))
+    if KismetMathLibrary:EqualEqual_ObjectObject(Super.SoulsItem, Item) and #self.OnSoulsUpdated > 0 then
+        for _, v in ipairs(self.OnSoulsUpdated) do
+            v(nil, Super:GetInventoryItemCount(Super.SoulsItem))
+        end
+    end
+end
+
+function m:AddOnSoulsUpdatedNotify(NotifyFunction)
+    self.OnSoulsUpdated = self.OnSoulsUpdated or {}
+    for _, v in ipairs(self.OnSoulsUpdated) do
+        if v == NotifyFunction then
+            return
+        end
+    end
+
+    table.insert(self.OnSoulsUpdated, NotifyFunction)
+end
+
+function m:RemoveOnSoulsUpdatedNotify(NotifyFunction)
+    local FunctionIndex = -1
+    for i, v in ipairs(self.OnSoulsUpdated) do
+        if v == NotifyFunction then
+            FunctionIndex = i
+            break
+        end
+    end
+
+    if FunctionIndex > 0 then
+        table.remove(self.OnSoulsUpdated, FunctionIndex)
     end
 end
 
@@ -123,19 +147,14 @@ end
 function m:ReceiveBeginPlay()
     local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
 
-    self.RotateCameraDelegate = self.RotateCameraDelegate or CreateFunctionDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end)
-    self.TouchPressedDelegate = self.TouchPressedDelegate or CreateFunctionDelegate(Super, self, self.OnTouchPressed)
-    self.TouchRepeatedDelegate = self.TouchRepeatedDelegate or CreateFunctionDelegate(Super, self, self.OnTouchRepeated)
-    self.TouchReleasedDelegate = self.TouchReleasedDelegate or CreateFunctionDelegate(Super, self, self.OnTouchReleased)
-
     RPGBlueprintLibrary:BindAxisAction(Super, 'MoveForward', nil)
     RPGBlueprintLibrary:BindAxisAction(Super, 'MoveRight', nil)
-    RPGBlueprintLibrary:BindAxisAction(Super, 'RotateCamera', self.RotateCameraDelegate)
+    RPGBlueprintLibrary:BindAxisAction(Super, 'RotateCamera', CreateFunctionDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end))
 
     local EInputEvent = Common.EInputEvent
-    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Pressed, self.TouchPressedDelegate)
-    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Repeat, self.TouchRepeatedDelegate)
-    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Released, self.TouchReleasedDelegate)
+    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Pressed, CreateFunctionDelegate(Super, self, self.OnTouchPressed))
+    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Repeat, CreateFunctionDelegate(Super, self, self.OnTouchRepeated))
+    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Released, CreateFunctionDelegate(Super, self, self.OnTouchReleased))
 end
 
 function m:OnTouchPressed(FingerIndex, Location)

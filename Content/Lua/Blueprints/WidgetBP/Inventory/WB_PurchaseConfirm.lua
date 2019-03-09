@@ -32,11 +32,8 @@ function m:Construct()
     local PlayerController = GameplayStatics:GetPlayerController(Super, 0)
     Super.ConfirmButton:SetIsEnabled(PlayerController:CastToLua():CanPurchaseItem(Super.ItemType))
 
-    self.CancelButtonClickedDelegate = self.CancelButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnCancelButtonClicked)
-    self.ConfirmButtonClickedDelegate = self.ConfirmButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnConfirmButtonClicked)
-
-    Super.CancelButton.OnClicked:Add(self.CancelButtonClickedDelegate)
-    Super.ConfirmButton.OnClicked:Add(self.ConfirmButtonClickedDelegate)
+    Super.CancelButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnCancelButtonClicked))
+    Super.ConfirmButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnConfirmButtonClicked))
 end
 
 function m:OnCancelButtonClicked()
@@ -53,12 +50,7 @@ end
 function m:FadeOut()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 2)
 
-    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
-        function()
-            Super:RemoveFromParent()
-        end)
-
-    BlueluaLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), -1, self.FadeOutDelegate)
+    BlueluaLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), -1, CreateFunctionDelegate(Super, function() Super:RemoveFromParent() end))
 end
 
 return m

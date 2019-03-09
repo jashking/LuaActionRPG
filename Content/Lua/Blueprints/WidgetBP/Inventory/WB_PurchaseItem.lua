@@ -18,8 +18,7 @@ function m:Construct()
     Super.DescriptionLabel:SetText(Super.ItemClass.ItemDescription)
     Super.PriceLabel:SetText(string.format('%d souls', Super.ItemClass.Price))
 
-    self.InventoryButtonClickedDelegate = self.InventoryButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnInventoryButtonClicked)
-    Super.InventoryButton.OnClicked:Add(self.InventoryButtonClickedDelegate)
+    Super.InventoryButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnInventoryButtonClicked))
 end
 
 function m:OnInventoryButtonClicked()

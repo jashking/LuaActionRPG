@@ -21,15 +21,10 @@ function m:Construct()
     local GameInstance = GameplayStatics:GetGameInstance(Super)
     Super.CurrentOptions = GameInstance:GetGlobalOptions(nil)
 
-    self.ClearSaveButtonClickedDelegate = self.ClearSaveButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnClearSaveButtonClicked)
-    self.DocsButtonClickedDelegate = self.DocsButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnDocsButtonClicked)
-    self.RateButtonClickedDelegate = self.RateButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnRateButtonClicked)
-    self.CloseButtonClickedDelegate = self.CloseButtonClickedDelegate or CreateFunctionDelegate(Super, self, self.OnCloseButtonClicked)
-
-    Super.ClearSaveButton.OnClicked:Add(self.ClearSaveButtonClickedDelegate)
-    Super.DocsButton.OnClicked:Add(self.DocsButtonClickedDelegate)
-    Super.RateButton.OnClicked:Add(self.RateButtonClickedDelegate)
-    Super.CloseButton.OnClicked:Add(self.CloseButtonClickedDelegate)
+    Super.ClearSaveButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnClearSaveButtonClicked))
+    Super.DocsButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnDocsButtonClicked))
+    Super.RateButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnRateButtonClicked))
+    Super.CloseButton.OnClicked:Add(CreateFunctionDelegate(Super, self, self.OnCloseButtonClicked))
 
     self:SetupUI()
 end
@@ -67,7 +62,7 @@ end
 function m:OnCloseButtonClicked()
     Super:PlayAnimation(Super.FadeAnimation, 0, 1, Common.EUMGSequencePlayMode.Reverse, 1)
 
-    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
+    local FadeOutDelegate = CreateFunctionDelegate(Super,
         function()
             Super.CurrentOptions.bMusic = Super.Music_Checkbox:IsChecked()
             Super.CurrentOptions.bSoundFX = Super.SFX_Checkbox:IsChecked()
@@ -80,7 +75,7 @@ function m:OnCloseButtonClicked()
             Super:RemoveFromParent()
         end)
 
-    BlueluaLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), -1, self.FadeOutDelegate)
+    BlueluaLibrary:Delay(Super, Super.FadeAnimation:GetEndTime(), -1, FadeOutDelegate)
 end
 
 return m

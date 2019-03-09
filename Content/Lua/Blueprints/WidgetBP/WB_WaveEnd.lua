@@ -21,12 +21,7 @@ function m:Construct()
 
     Super:PlayAnimation(Super.Anim_WaveComplete, 0, 1, Common.EUMGSequencePlayMode.Forward, 1)
 
-    self.FadeOutDelegate = self.FadeOutDelegate or CreateFunctionDelegate(Super,
-        function()
-            Super:RemoveFromParent()
-        end)
-
-    BlueluaLibrary:Delay(Super, Super.Anim_WaveComplete:GetEndTime(), -1, self.FadeOutDelegate)
+    BlueluaLibrary:Delay(Super, Super.Anim_WaveComplete:GetEndTime(), -1, CreateFunctionDelegate(Super, function() Super:RemoveFromParent() end))
 end
 
 return m
