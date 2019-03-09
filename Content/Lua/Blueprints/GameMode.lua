@@ -7,7 +7,7 @@ local Super = Super
 local LoadClass = LoadClass
 local LoadObject = LoadObject
 local CreateFunctionDelegate = CreateFunctionDelegate
-local DeleteFunctionDelegate = DeleteFunctionDelegate
+local DestroyObject = DestroyObject
 
 -- C++ library
 local GameplayStatics = LoadClass('GameplayStatics')
@@ -87,7 +87,7 @@ function m:GameOver()
     
     if self.PlayTimerDelegate then
         KismetSystemLibrary:K2_ClearTimerDelegate(self.PlayTimerDelegate)
-        DeleteFunctionDelegate(self.PlayTimerDelegate)
+        DestroyObject(self.PlayTimerDelegate)
         self.PlayTimerDelegate = nil
     end
 

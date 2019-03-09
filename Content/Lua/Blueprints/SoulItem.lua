@@ -33,7 +33,7 @@ function m:OnActorBeginOverlap(OverlappedActor, OtherActor)
     end
 
     if not self.DestroyEffect or not self.DestroyEffect:IsValid() then
-        self.DestroyEffect = LoadObject(nil, '/Game/Effects/FX_Skill_Whirlwind/P_Whirlwind_Lightning_Start_01.P_Whirlwind_Lightning_Start_01')
+        self.DestroyEffect = LoadObject(Super, '/Game/Effects/FX_Skill_Whirlwind/P_Whirlwind_Lightning_Start_01.P_Whirlwind_Lightning_Start_01')
     end
 
     GameplayStatics:SpawnEmitterAtLocation(Super, self.DestroyEffect, PlayerCharacter:K2_GetActorLocation(),
