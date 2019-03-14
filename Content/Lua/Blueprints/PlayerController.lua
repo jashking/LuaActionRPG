@@ -145,16 +145,16 @@ function m:ReceiveTick(DeltaSeconds)
 end
 
 function m:ReceiveBeginPlay()
-    local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
+    local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
-    RPGBlueprintLibrary:BindAxisAction(Super, 'MoveForward', nil)
-    RPGBlueprintLibrary:BindAxisAction(Super, 'MoveRight', nil)
-    RPGBlueprintLibrary:BindAxisAction(Super, 'RotateCamera', CreateFunctionDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end))
+    BlueluaLibrary:BindAxisAction(Super, 'MoveForward', nil)
+    BlueluaLibrary:BindAxisAction(Super, 'MoveRight', nil)
+    BlueluaLibrary:BindAxisAction(Super, 'RotateCamera', CreateFunctionDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end))
 
     local EInputEvent = Common.EInputEvent
-    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Pressed, CreateFunctionDelegate(Super, self, self.OnTouchPressed))
-    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Repeat, CreateFunctionDelegate(Super, self, self.OnTouchRepeated))
-    RPGBlueprintLibrary:BindTouchAction(Super, EInputEvent.IE_Released, CreateFunctionDelegate(Super, self, self.OnTouchReleased))
+    BlueluaLibrary:BindTouchAction(Super, EInputEvent.IE_Pressed, CreateFunctionDelegate(Super, self, self.OnTouchPressed))
+    BlueluaLibrary:BindTouchAction(Super, EInputEvent.IE_Repeat, CreateFunctionDelegate(Super, self, self.OnTouchRepeated))
+    BlueluaLibrary:BindTouchAction(Super, EInputEvent.IE_Released, CreateFunctionDelegate(Super, self, self.OnTouchReleased))
 end
 
 function m:OnTouchPressed(FingerIndex, Location)

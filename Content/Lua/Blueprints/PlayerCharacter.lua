@@ -24,15 +24,15 @@ function m:ReceiveBeginPlay()
 end
 
 function m:OnSetupPlayerInput()
-    local RPGBlueprintLibrary = LoadClass('RPGBlueprintLibrary')
+    local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
-    RPGBlueprintLibrary:BindAction(self.Super, 'NormalAttack', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnNormalAttack))
-    RPGBlueprintLibrary:BindAction(self.Super, 'SpecialAttack', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnSpecialAttack))
-    RPGBlueprintLibrary:BindAction(self.Super, 'Roll', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnRoll))
-    RPGBlueprintLibrary:BindAction(self.Super, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.SwitchWeapon))
+    BlueluaLibrary:BindAction(self.Super, 'NormalAttack', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnNormalAttack))
+    BlueluaLibrary:BindAction(self.Super, 'SpecialAttack', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnSpecialAttack))
+    BlueluaLibrary:BindAction(self.Super, 'Roll', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnRoll))
+    BlueluaLibrary:BindAction(self.Super, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.SwitchWeapon))
 
-    RPGBlueprintLibrary:BindAxisAction(self.Super, 'MoveForward', nil)
-    RPGBlueprintLibrary:BindAxisAction(self.Super, 'MoveRight', nil)
+    BlueluaLibrary:BindAxisAction(self.Super, 'MoveForward', nil)
+    BlueluaLibrary:BindAxisAction(self.Super, 'MoveRight', nil)
 end
 
 function m:OnManaChanged(DeltaValue, EventTags)
