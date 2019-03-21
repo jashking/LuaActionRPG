@@ -26,13 +26,13 @@ end
 function m:OnSetupPlayerInput()
     local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
-    BlueluaLibrary:BindAction(self.Super, 'NormalAttack', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnNormalAttack))
-    BlueluaLibrary:BindAction(self.Super, 'SpecialAttack', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnSpecialAttack))
-    BlueluaLibrary:BindAction(self.Super, 'Roll', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.OnRoll))
-    BlueluaLibrary:BindAction(self.Super, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, CreateFunctionDelegate(self.Super, self, self.SwitchWeapon))
+    BlueluaLibrary:BindAction(self.Super, 'NormalAttack', Common.EInputEvent.IE_Pressed, true, false, CreateFunctionDelegate(self.Super, self, self.OnNormalAttack))
+    BlueluaLibrary:BindAction(self.Super, 'SpecialAttack', Common.EInputEvent.IE_Pressed, true, false, CreateFunctionDelegate(self.Super, self, self.OnSpecialAttack))
+    BlueluaLibrary:BindAction(self.Super, 'Roll', Common.EInputEvent.IE_Pressed, true, false, CreateFunctionDelegate(self.Super, self, self.OnRoll))
+    BlueluaLibrary:BindAction(self.Super, 'ChangeWeapon', Common.EInputEvent.IE_Pressed, true, false, CreateFunctionDelegate(self.Super, self, self.SwitchWeapon))
 
-    BlueluaLibrary:BindAxisAction(self.Super, 'MoveForward', nil)
-    BlueluaLibrary:BindAxisAction(self.Super, 'MoveRight', nil)
+    BlueluaLibrary:BindAxisAction(self.Super, 'MoveForward', true, false, nil)
+    BlueluaLibrary:BindAxisAction(self.Super, 'MoveRight', true, false, nil)
 end
 
 function m:OnManaChanged(DeltaValue, EventTags)

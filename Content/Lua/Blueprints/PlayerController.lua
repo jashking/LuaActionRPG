@@ -147,14 +147,14 @@ end
 function m:ReceiveBeginPlay()
     local BlueluaLibrary = LoadClass('BlueluaLibrary')
 
-    BlueluaLibrary:BindAxisAction(Super, 'MoveForward', nil)
-    BlueluaLibrary:BindAxisAction(Super, 'MoveRight', nil)
-    BlueluaLibrary:BindAxisAction(Super, 'RotateCamera', CreateFunctionDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end))
+    BlueluaLibrary:BindAxisAction(Super, 'MoveForward', true, false, nil)
+    BlueluaLibrary:BindAxisAction(Super, 'MoveRight', true, false, nil)
+    BlueluaLibrary:BindAxisAction(Super, 'RotateCamera', true, false, CreateFunctionDelegate(Super, function(AxisValue) Super:AddYawInput(AxisValue) end))
 
     local EInputEvent = Common.EInputEvent
-    BlueluaLibrary:BindTouchAction(Super, EInputEvent.IE_Pressed, CreateFunctionDelegate(Super, self, self.OnTouchPressed))
-    BlueluaLibrary:BindTouchAction(Super, EInputEvent.IE_Repeat, CreateFunctionDelegate(Super, self, self.OnTouchRepeated))
-    BlueluaLibrary:BindTouchAction(Super, EInputEvent.IE_Released, CreateFunctionDelegate(Super, self, self.OnTouchReleased))
+    BlueluaLibrary:BindTouchAction(Super, EInputEvent.IE_Pressed, true, false, CreateFunctionDelegate(Super, self, self.OnTouchPressed))
+    BlueluaLibrary:BindTouchAction(Super, EInputEvent.IE_Repeat, true, false, CreateFunctionDelegate(Super, self, self.OnTouchRepeated))
+    BlueluaLibrary:BindTouchAction(Super, EInputEvent.IE_Released, true, false, CreateFunctionDelegate(Super, self, self.OnTouchReleased))
 end
 
 function m:OnTouchPressed(FingerIndex, Location)
