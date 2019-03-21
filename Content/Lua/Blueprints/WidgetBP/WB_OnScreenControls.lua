@@ -38,13 +38,7 @@ function m:SetSafemargins()
         return
     end
 
-    local FMargin = LoadStruct('Margin')
-    local Margin = FMargin()
-    Margin.Left = 64
-    Margin.Top = 0
-    Margin.Right = 64
-    Margin.Bottom = 32
-
+    local Margin = { Left = 64, Top = 0, Right = 64, Bottom = 32 }
     Super:SetPadding(Margin)
 end
 
