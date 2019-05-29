@@ -35,10 +35,7 @@ void ARPGGameModeBase::BeginDestroy()
 
 void ARPGGameModeBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
-	if (!OnProcessLuaOverrideEvent(Function, Parameters))
-	{
-		Super::ProcessEvent(Function, Parameters);
-	}
+	LuaProcessEvent<Super>(Function, Parameters);
 }
 
 FString ARPGGameModeBase::OnInitBindingLuaPath_Implementation()

@@ -123,10 +123,7 @@ void URPGGameInstanceBase::BeginDestroy()
 
 void URPGGameInstanceBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
-	if (!OnProcessLuaOverrideEvent(Function, Parameters))
-	{
-		Super::ProcessEvent(Function, Parameters);
-	}
+	LuaProcessEvent<Super>(Function, Parameters);
 }
 
 FString URPGGameInstanceBase::OnInitBindingLuaPath_Implementation()

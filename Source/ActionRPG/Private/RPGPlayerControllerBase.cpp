@@ -398,10 +398,7 @@ void ARPGPlayerControllerBase::BeginDestroy()
 
 void ARPGPlayerControllerBase::ProcessEvent(UFunction* Function, void* Parameters)
 {
-	if (!OnProcessLuaOverrideEvent(Function, Parameters))
-	{
-		Super::ProcessEvent(Function, Parameters);
-	}
+	LuaProcessEvent<Super>(Function, Parameters);
 }
 
 void ARPGPlayerControllerBase::Possess(APawn* NewPawn)

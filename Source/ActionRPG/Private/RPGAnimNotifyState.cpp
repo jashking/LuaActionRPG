@@ -12,10 +12,7 @@ void URPGAnimNotifyState::ProcessEvent(UFunction* Function, void* Parameters)
 		OnInitLuaBinding();
 	}
 
-	if (!OnProcessLuaOverrideEvent(Function, Parameters))
-	{
-		Super::ProcessEvent(Function, Parameters);
-	}
+	LuaProcessEvent<Super>(Function, Parameters);
 }
 
 void URPGAnimNotifyState::BeginDestroy()
