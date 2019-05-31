@@ -2,6 +2,6 @@
 
 * Lua version for Epic's ActionRPG demo game.
 
-* Please recusively checkout submodules Bluelua and Liblua.
+* Please recusively checkout submodules Bluelua and Liblua. git clone --recursive *git-repo-path*
 
 * Note: This lua demo is **Not** complete yet.
