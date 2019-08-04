@@ -6,6 +6,7 @@
 #include "LuaImplementableInterface.h"
 #include "RPGTypes.h"
 #include "RPGInventoryInterface.h"
+#include "Runtime/Launch/Resources/Version.h"
 #include "RPGPlayerControllerBase.generated.h"
 
 /** Base class for PlayerController, should be blueprinted */
@@ -21,8 +22,13 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void BeginDestroy() override;
 	virtual void ProcessEvent(UFunction* Function, void* Parameters) override;
+#if ENGINE_MINOR_VERSION >= 22
+	virtual void OnPossess(APawn* NewPawn) override;
+	virtual void OnUnPossess() override;
+#else
 	virtual void Possess(APawn* NewPawn) override;
 	virtual void UnPossess() override;
+#endif // ENGINE_MINOR_VERSION >= 22
 
 	/** Map of all items owned by this player, from definition to data */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory)
@@ -55,11 +61,11 @@ public:
 
 	/** Called right after we have possessed a pawn */
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "BeginPossessPawn"))
-	void ReceivePossess(APawn* NewPawn);
+	void OnReceivePossess(APawn* NewPawn);
 
 	/** Called right before unpossessing a pawn */
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "EndPossessPawn"))
-	void ReceiveUnPossess(APawn* PreviousPawn);
+	void OnReceiveUnPossess(APawn* PreviousPawn);
 
 	/** Adds a new inventory item, will add it to an empty slot if possible. If the item supports count you can add more than one count. It will also update the level when adding if required */
 	UFUNCTION(BlueprintCallable, Category = Inventory)

@@ -401,6 +401,32 @@ void ARPGPlayerControllerBase::ProcessEvent(UFunction* Function, void* Parameter
 	LuaProcessEvent<Super>(Function, Parameters);
 }
 
+#if ENGINE_MINOR_VERSION >= 22
+void ARPGPlayerControllerBase::OnPossess(APawn* NewPawn)
+{
+	Super::OnPossess(NewPawn);
+
+	// Notify blueprint about the possession, only if it is valid
+	// In a network game this would need to be replicated
+	if (NewPawn)
+	{
+		OnReceivePossess(NewPawn);
+	}
+}
+
+void ARPGPlayerControllerBase::OnUnPossess()
+{
+	APawn* PreviousPawn = GetPawn();
+
+	if (PreviousPawn)
+	{
+		// Only call if we had one before		
+		OnReceiveUnPossess(PreviousPawn);
+	}
+	
+	Super::OnUnPossess();
+}
+#else
 void ARPGPlayerControllerBase::Possess(APawn* NewPawn)
 {
 	Super::Possess(NewPawn);
@@ -409,7 +435,7 @@ void ARPGPlayerControllerBase::Possess(APawn* NewPawn)
 	// In a network game this would need to be replicated
 	if (NewPawn)
 	{
-		ReceivePossess(NewPawn);
+		OnReceivePossess(NewPawn);
 	}
 }
 
@@ -420,11 +446,12 @@ void ARPGPlayerControllerBase::UnPossess()
 	if (PreviousPawn)
 	{
 		// Only call if we had one before		
-		ReceiveUnPossess(PreviousPawn);
+		OnReceiveUnPossess(PreviousPawn);
 	}
-	
+
 	Super::UnPossess();
 }
+#endif // ENGINE_MINOR_VERSION >= 22
 
 FString ARPGPlayerControllerBase::OnInitBindingLuaPath_Implementation()
 {

@@ -9,6 +9,8 @@ public class ActionRPGLoadingScreen : ModuleRules
 	public ActionRPGLoadingScreen(ReadOnlyTargetRules Target)
 		: base(Target)
 	{
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
 		PrivateIncludePaths.Add("ActionRPGLoadingScreen/Private");
 
 		PublicDependencyModuleNames.AddRange(
