@@ -12,6 +12,7 @@
     <Option Name="IterativeCooking" DefaultValue="false" Description=""/>
 	<Option Name="ProjectDir" DefaultValue="" Description=""/>
 	<Option Name="ProjectName" DefaultValue="" Description=""/>
+	<Option Name="StageCommandLine" DefaultValue="" Description=""/>
 	<!-- TODO Option
 		-Distribution
 		-NoDebugInfo
@@ -33,7 +34,7 @@
     <Property Name="CookCommand" Value="$(CookCommand) -IterativeCooking" If="$(IterativeCooking)"/>
     <Property Name="CookCommand" Value="-SkipCook" If="'$(WithCook)' == false"/>
 
-    <Property Name="StageCommand" Value="-Stage"/>
+    <Property Name="StageCommand" Value='-Stage -cmdline="$(StageCommandLine)"'/>
 
     <Property Name="PackageCommand" Value="-Package"/>
 
@@ -66,7 +67,7 @@
 			<Compile Target="$(ProjectName)Editor" Platform="Win64" Configuration="Development" Arguments="$(ProjectDir)\$(ProjectName).uproject" Tag="#Build Editor Win64"/>
 		</Node>
 	</Agent>
-
+	
 	<!-- Games Begins -->
 	
     <Agent Name="Game Win64" Type="BuildOnWindows">
